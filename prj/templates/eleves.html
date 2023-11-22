@@ -1,0 +1,32 @@
+<!-- templates/eleves.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Eleves Table{% endblock %}
+
+{% block content %}
+    <div class="mt-4">
+        <h2 class="mb-4">Eleves Table</h2>
+        <div class="mb-2">
+            <a href="{{ url_for('ajouter_eleve') }}" class="btn btn-ajouter">Ajouter Eleve</a>
+        </div>
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Email</th>
+                    <th>Numéro de téléphone</th>
+                    <th>Numéro des parents</th>
+                    <th>Date d'inscription</th>
+                    <th>Nombre d'absence</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- You can add rows dynamically when you have data -->
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
