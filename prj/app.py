@@ -5,7 +5,20 @@ from flask import session, redirect, url_for
 
 app = Flask(__name__)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()  # Create an instance of the LoginForm
 
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        if username in users and users[username] == password:
+            return f'Welcome, {username}!'
+        else:
+            return 'Invalid username or password. Please try again.'
+
+    return render_template('login.html', form=form)
 
 @app.route("/eleves")
 def eleves():
