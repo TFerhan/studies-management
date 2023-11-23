@@ -1,9 +1,37 @@
-
-
 {% extends 'base.html' %}
 
 {% block title %}Ajouter Elève{% endblock %}
 
-{% block content %}
 
+{% block content %}
+{% if message %} {{message}} {% endif %}
+  <h2>Ajouter un élève</h2>
+  <form method="POST" action="{{ url_for('ajouter_eleve') }}">
+    <br>
+      {{ form.nom_ev.label }}
+      {{ form.nom_ev }}
+    <br>
+      {{ form.prenom_ev.label }}
+      {{ form.prenom_ev }}
+    <br>
+      {{ form.email_ev.label }}
+      {{ form.email_ev }}
+    <br>
+      {{ form.numtel_ev.label }}
+      {{ form.numtel_ev }}
+    <br>
+      {{ form.numtel_par.label }}
+      {{ form.numtel_par }}
+    <br>
+      {{ form.date_inscrit.label }}
+      {{ form.date_inscrit }}
+    <br>
+      {{ form.nb_absence.label }}
+      {{ form.nb_absence }}
+    <br>
+    {{form.submit}}
+
+    
+  </form>
 {% endblock %}
+
