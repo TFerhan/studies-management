@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = 'hola'
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'psplus14',
+    'password': 'hna diro lmdp lidrto f mysql rabaqi makhdamch hdchi mhm',
     'database': 'mydb'
 }
 
