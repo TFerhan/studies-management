@@ -55,13 +55,13 @@ def ajouter_eleve():
 
         # SQL query to insert data into the table
         insert_query = """
-        INSERT INTO Eleve (nom_ev, prenom_ev, email_ev, numtel_ev, numtel_par, date_inscrit, nb_absence)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO Eleve (nom_ev, prenom_ev, email_ev, numtel_ev, numtel_par, date_inscrit)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """
         cur = mysql.connection.cursor()
 
         # Execute the query with the form data
-        cur.execute(insert_query, (nom_ev, prenom_ev, email_ev, numtel_ev, numtel_par, date_inscrit, nb_absence))
+        cur.execute(insert_query, (nom_ev, prenom_ev, email_ev, numtel_ev, numtel_par, date_inscrit))
         mysql.connection.commit()
         flash('Ajout avec succès!', 'success')
 
