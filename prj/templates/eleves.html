@@ -1,33 +1,42 @@
-
-
 {% extends 'base.html' %}
 
-{% block title %}Eleves Table{% endblock %}
-
 {% block content %}
-    <div class="mt-4">
-        <h2 class="mb-4">Eleves Table</h2>
-        <div class="mb-2">
-            <a href="{{ url_for('ajouter_eleve') }}" class="btn btn-ajouter">Ajouter Eleve</a>
-        </div>
-        <table class="custom-table">
-            <thead>
+    <h2>Eleves Data</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Numéro de Téléphone du Parent</th>
+                <th>Date d'Inscription</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for eleve in eleves_data %}
                 <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Prenom</th>
-                    <th>Email</th>
-                    <th>N° Telephone élève</th>
-                    <th>N° Telephone des parents</th>
-                    <th>Date d'inscription</th>
-                    <th>Nombre de séances disponible</th>
-                    <th>Nombre d'absences</th>
-                    <th>Status</th>
+                    <td>{{ eleve[0] }}</td>
+                    <td>{{ eleve[1] }}</td>
+                    <td>{{ eleve[2] }}</td>
+                    <td>{{ eleve[3] }}</td>
+                    <td>{{ eleve[4] }}</td>
+                    <td>{{ eleve[5] }}</td>
+                    <td>{{ eleve[6] }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_eleve', id_eleve=eleve[0]) }}" method="post">
+                            <button type="submit">Supprimer</button>
+                        </form>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form action="{{ url_for('ajouter_eleve')}}" method="post">
+        <button type="submit">Ajouter</button>
+    </form>
+    
 {% endblock %}
 
