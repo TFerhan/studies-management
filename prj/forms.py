@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, DateField, SubmitField, PasswordField
+from wtforms import StringField, IntegerField, DateField, SubmitField, PasswordField,EmailField
 from wtforms.validators import DataRequired, Email, Length
 
 class LoginForm(FlaskForm):
@@ -16,4 +16,14 @@ class AjtEleveForm(FlaskForm):
     date_inscrit = DateField('Date d\'inscription', validators=[DataRequired()])
     nb_absence = IntegerField('Nombre d\'absence', default=0, validators=[DataRequired()])
     submit = SubmitField("Ajouter l'élève")
+
+class AjtProf(FlaskForm):
+    Cin_prof = StringField('CIN professeur', validators=[DataRequired()])
+    nom_prof = StringField('Nom du Professeur', validators=[DataRequired()])
+    prenom_prof = StringField('Prenom du Professeur', validators=[DataRequired()])
+    email_prof = EmailField('Email Professeur', validators=[DataRequired(), Email()])
+    numtel_prof = StringField('numero de telephone', validators=[DataRequired(), Length(max=14)])
+    submit = SubmitField("Ajouter le Professeur")
+
+
 
