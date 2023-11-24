@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %} Enseignants {% endblock %}
+
+{% block heading %}
+<center>ENSEIGNANTS</center>
+{% endblock %}
+
+
+{% block content %}
+<div class="mb-2">
+    <a href="{{ url_for('ajouter_prof') }}" class="btn btn-ajouter">Ajouter Professeur</a>
+</div>
+<table>
+  <tr>
+    <th>Id</th>
+    <th>CIN</th>
+    <th>Nom</th>
+    <th>Prenom</th>
+    <th>Email</th>
+    <th>Numero de téléphone</th>
+  </tr>
+  {% for prof in professeurs %}
+  <tr>
+    <td>{{ prof[0] }}</td>
+    <td>
+        <a href="{{ url_for('profs_list') }}">
+          {{ prof[1] }}
+        </a>
+      </td>
+    <td>{{ prof[2] }}</td>
+    <td>{{ prof[3] }}</td>
+    <td>{{ prof[4] }}</td>
+    <td>{{ prof[5] }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
