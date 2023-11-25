@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Seances Data</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type de Seance</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seance in seances_data %}
+                <tr>
+                    <td>{{ seance[0] }}</td>
+                    <td>{{ seance[1] }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_seance', idseance=seance[0]) }}" method="post">
+                            <button type="submit">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form action="{{ url_for('ajouter_seance') }}" method="post">
+        <button type="submit">Ajouter</button>
+    </form>
+{% endblock %}
