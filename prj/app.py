@@ -85,7 +85,6 @@ def delete_prof(idenseignant):
     cur.close()
     return redirect(url_for('profs_list')) 
 
-from flask import redirect, url_for
 
 @app.route('/modifier_prof/<int:idenseignant>', methods=['GET', 'POST'])
 def modifier_prof(idenseignant):
