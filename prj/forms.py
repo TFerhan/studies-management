@@ -26,4 +26,19 @@ class AjtProf(FlaskForm):
     submit = SubmitField("Ajouter le Professeur")
 
 
+class AjtGroupeForm(FlaskForm):
+    nombre_eleves = StringField('Nombre d\'élèves', validators=[DataRequired()])
+    submit = SubmitField('Ajouter Groupe')
 
+class AjtSeanceForm(FlaskForm):
+    type_seance = StringField('Type de séance', validators=[DataRequired()])
+    submit = SubmitField('Ajouter Séance')
+
+class AjtFactureForm(FlaskForm):
+    somme_total = IntegerField('Somme Totale', validators=[DataRequired()])
+    date_paiement = DateField('Date de Paiement',validators=[DataRequired()])
+    submit = SubmitField('Ajouter Facture')
+
+class AjtFormationForm(FlaskForm):
+    nom_formation = StringField('Nom de Formation', validators=[DataRequired()])
+    submit = SubmitField('Ajouter Formation')
