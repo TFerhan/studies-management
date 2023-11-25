@@ -14,8 +14,8 @@ app.config['MYSQL_DB'] = 'mydb'
 app.config['SECRET_KEY'] = 'WlUrPgXjHOL9OquLGcQ96yfoZOyNLfCYFV05NUQN9DE3Fb4tUcWW02s4pYySzeDj'
 
 mysql = MySQL(app)
-@app.route('/home')
-def home():
+@app.route('/index')
+def index():
     return render_template('index.html')
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
