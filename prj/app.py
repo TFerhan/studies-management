@@ -117,7 +117,173 @@ def delete_eleve(id_eleve):
     cur.close()
     return redirect(url_for('eleves'))
 
+@app.route('/groupes')
+def groupes():
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM groupe')
+    groupe_data = cur.fetchall()
+    cur.close()
+    return render_template("groupes.html", groupe_data = groupe_data)
 
+
+@app.route('/ajouter_groupe', methods=['GET', 'POST'])
+def ajouter_groupe():
+    form = AjtGroupeForm()
+
+    if form.validate_on_submit():
+        # Retrieve form data
+        nombre_eleves = form.nombre_eleves.data
+
+        # SQL query to insert data into the table
+        insert_query = """
+        INSERT INTO groupe (nombre_eleves)
+        VALUES (%s)
+        """
+        cur = mysql.connection.cursor()
+
+        # Execute the query with the form data
+        cur.execute(insert_query, (nombre_eleves,))
+        mysql.connection.commit()
+        cur.close()
+        flash('Ajout avec succès!', 'success')
+
+        return redirect(url_for('groupes'))  # Assuming you have a route named 'groupes'
+    return render_template('ajouter_groupe.html', form=form)
+
+@app.route('/delete_groupe/<int:idgroupe>', methods=['POST'])
+def delete_groupe(idgroupe):
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM groupe WHERE idgroupe = %s', (idgroupe,))
+    mysql.connection.commit()
+    cur.close()
+    return redirect(url_for('groupes')) 
+
+@app.route('/ajouter_seance', methods=['GET', 'POST'])
+def ajouter_seance():
+    form = AjtSeanceForm()
+
+    if form.validate_on_submit():
+        # Retrieve form data
+        type_séance = form.type_seance.data
+
+        # SQL query to insert data into the table
+        insert_query = """
+        INSERT INTO séance (type_séance)
+        VALUES (%s)
+        """
+        cur = mysql.connection.cursor()
+
+        # Execute the query with the form data
+        cur.execute(insert_query, (type_séance,))
+        mysql.connection.commit()
+        cur.close()
+        flash('Ajout avec succès!', 'success')
+
+        return redirect(url_for('seances'))  # Assuming you have a route named 'seances'
+    return render_template('ajouter_seance.html', form=form)
+
+
+@app.route('/delete_seance/<int:idseance>', methods=['POST'])
+def delete_seance(idseance):
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM séance WHERE idséance = %s', (idseance,))
+    mysql.connection.commit()
+    cur.close()
+    return redirect(url_for('seances'))
+
+
+@app.route('/seances')
+def seances():
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM séance')
+    seances_data = cur.fetchall()
+    cur.close()
+    return render_template("seances.html", seances_data=seances_data)
+
+
+@app.route('/ajouter_facture', methods=['GET', 'POST'])
+def ajouter_facture():
+    form = AjtFactureForm()
+
+    if form.validate_on_submit():
+        # Retrieve form data
+        somme_total = form.somme_total.data
+        date_paiement = form.date_paiement.data
+
+        # SQL query to insert data into the table
+        insert_query = """
+        INSERT INTO facture (somme_total, date_paiement)
+        VALUES (%s, %s)
+        """
+        cur = mysql.connection.cursor()
+
+        # Execute the query with the form data
+        cur.execute(insert_query, (somme_total, date_paiement))
+        mysql.connection.commit()
+        cur.close()
+        flash('Ajout avec succès!', 'success')
+
+        return redirect(url_for('factures'))  # Assuming you have a route named 'factures'
+    return render_template('ajouter_facture.html', form=form)
+
+@app.route('/factures')
+def factures():
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM facture')
+    factures_data = cur.fetchall()
+    cur.close()
+    return render_template("factures.html", factures_data=factures_data)
+
+@app.route('/delete_facture/<int:id_facture>', methods=['POST'])
+def delete_facture(id_facture):
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM facture WHERE idfacture = %s', (id_facture,))
+    mysql.connection.commit()
+    cur.close()
+    return redirect(url_for('factures'))
+
+
+@app.route('/ajouter_formation', methods=['GET', 'POST'])
+def ajouter_formation():
+    form = AjtFormationForm()
+
+    if form.validate_on_submit():
+        # Retrieve form data
+        nom_formation = form.nom_formation.data
+
+        # SQL query to insert data into the table
+        insert_query = """
+        INSERT INTO formation (nom_formation)
+        VALUES (%s)
+        """
+        cur = mysql.connection.cursor()
+
+        # Execute the query with the form data
+        cur.execute(insert_query, (nom_formation,))
+        mysql.connection.commit()
+        cur.close()
+        flash('Ajout avec succès!', 'success')
+
+        return redirect(url_for('formations')) 
+    return render_template('ajouter_formation.html', form=form)
+
+
+@app.route('/delete_formation/<int:id_formation>', methods=['POST'])
+def delete_formation(id_formation):
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM formation WHERE idformation = %s', (id_formation,))
+    mysql.connection.commit()
+    cur.close()
+    return redirect(url_for('formations'))
+
+
+@app.route('/formations')
+def formations():
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM formation')
+    formations_data = cur.fetchall()
+    cur.close()
+    return render_template("formations.html", formations_data=formations_data)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3000)
