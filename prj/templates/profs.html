@@ -8,9 +8,6 @@
 
 
 {% block content %}
-<div class="mb-2">
-    <a href="{{ url_for('ajouter_prof') }}" class="btn btn-ajouter">Ajouter Professeur</a>
-</div>
 <table>
   <tr>
     <th>Id</th>
@@ -19,6 +16,8 @@
     <th>Prenom</th>
     <th>Email</th>
     <th>Numero de téléphone</th>
+    <th>Action</th>
+    <th>Action</th>
   </tr>
   {% for prof in professeurs %}
   <tr>
@@ -32,7 +31,20 @@
     <td>{{ prof[3] }}</td>
     <td>{{ prof[4] }}</td>
     <td>{{ prof[5] }}</td>
+    <td>
+      <form action="{{ url_for('delete_prof', idenseignant=prof[0]) }}" method="POST">
+          <button type="submit">Supprimer</button>
+      </form>
+  </td>
+  <td>
+    <form action="{{ url_for('modifier_prof', idenseignant=prof[0]) }}" method="GET">
+        <button type="submit">Modifier</button>
+    </form>
+</td>
   </tr>
   {% endfor %}
 </table>
+<div class="mb-2">
+  <a href="{{ url_for('ajouter_prof') }}" class="btn btn-ajouter">Ajouter Professeur</a>
+</div>
 {% endblock %}
