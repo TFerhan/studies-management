@@ -1,6 +1,6 @@
 from flask import Flask, render_template, abort, request, flash
 from flask import session, redirect, url_for
-from forms import AjtEleveForm, AjtProf, LoginForm
+from forms import AjtEleveForm, AjtProf, LoginForm,AjtFactureForm,AjtFormationForm,AjtGroupeForm,AjtSeanceForm
 from flask_mysqldb import MySQL
 
 
@@ -14,6 +14,10 @@ app.config['MYSQL_DB'] = 'mydb'
 app.config['SECRET_KEY'] = 'WlUrPgXjHOL9OquLGcQ96yfoZOyNLfCYFV05NUQN9DE3Fb4tUcWW02s4pYySzeDj'
 
 mysql = MySQL(app)
+@app.route('/home')
+def home():
+    return render_template('index.html')
+@app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm() 
@@ -21,13 +25,14 @@ def login():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
+        cursor = mysql.connection.cursor()
         
         select_admin = """SELECT * FROM admins WHERE username = %s AND password = %s"""
         cursor.execute(select_admin, (username, password))
         admin_data = cursor.fetchall() 
 
         if admin_data:
-            return f'Welcome, {username}!'
+            return render_template('index.html',username=username)
         else:
             return 'Invalid username or password. Please try again.'
 
@@ -38,6 +43,7 @@ def login():
 
 @app.route('/professeur')
 def profs_list():
+    cursor = mysql.connection.cursor()
     select_prof=""" SELECT * FROM enseignant; """
     cursor.execute(select_prof)
     professeurs= cursor.fetchall()  
@@ -62,13 +68,69 @@ def ajouter_prof():
         """
 
         # Execute the query with the form data
+        cursor = mysql.connection.cursor()
         cursor.execute(insert_query, (Cin_prof, nom_prof, prenom_prof, email_prof, numtel_prof))
-        conn.commit()
+        mysql.connection.commit()
         flash('Ajout avec succès!', 'success')
 
         return render_template('ajouter_prof.html', message = "Ajouter avec success",form=form)
 
     return render_template('ajouter_prof.html', form=form)
+
+@app.route('/delete_prof/<int:idenseignant>', methods=['POST'])
+def delete_prof(idenseignant):
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM enseignant WHERE idenseignant = %s', (idenseignant,))
+    mysql.connection.commit()
+    cur.close()
+    return redirect(url_for('profs_list')) 
+
+from flask import redirect, url_for
+
+@app.route('/modifier_prof/<int:idenseignant>', methods=['GET', 'POST'])
+def modifier_prof(idenseignant):
+    cursor = mysql.connection.cursor()
+    select_query = "SELECT * FROM enseignant WHERE idenseignant = %s"
+    cursor.execute(select_query, (idenseignant,))
+    professeur = cursor.fetchone()
+    cursor.close()
+
+    form = AjtProf()
+
+    if form.validate_on_submit():
+        Cin_prof = form.Cin_prof.data
+        nom_prof = form.nom_prof.data
+        prenom_prof = form.prenom_prof.data
+        email_prof = form.email_prof.data
+        numtel_prof = form.numtel_prof.data
+
+        update_query = """
+        UPDATE enseignant
+        SET Cin_prof = %s, nom_enseignant = %s, prenom_enseignant = %s,
+            email_enseignant = %s, numtel_enseignant = %s
+        WHERE idenseignant = %s
+        """
+        
+        cursor = mysql.connection.cursor()
+
+        try:
+            cursor.execute(update_query, (Cin_prof, nom_prof, prenom_prof, email_prof, numtel_prof, idenseignant))
+            mysql.connection.commit()
+
+            flash('Modification réussie!', 'success')
+            return redirect(url_for('profs_list'))  # Redirige vers la liste des professeurs
+
+        except Exception as e:
+            flash('Erreur lors de la modification!', 'error')
+
+        finally:
+            cursor.close()
+
+    return render_template('modifier_prof.html', prof=professeur, form=form)
+
+        
+    
+
 
 
 @app.route("/eleves")
