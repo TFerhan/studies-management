@@ -1,28 +1,22 @@
-<!-- templates/base.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>{% block title %}My Flask App{% endblock %}</title>
+    <title>{% block title %}FBM DBMS{% endblock %}</title>
 </head>
 <body>
+    <div class="navbar">
+        <a href="{{ url_for('eleves') }}">Eleves</a>
+        <a href="{{ url_for('groupes') }}">Groupes</a>
+        <a href="{{ url_for('seances') }}">Seances</a>
+        <a href="{{ url_for('factures') }}">Factures</a>
+        <a href="{{ url_for('formations') }}">Formations</a>
+    </div>
     <div class="container">
-        <header>
-            <nav>
-                <!-- Your navigation links or menu if needed -->
-            </nav>
-        </header>
-        <main role="main">
-            {% block content %}{% endblock %}
-        </main>
-        <footer class="mt-4 text-center">
-            &copy; fbm
-        </footer>
+        {% block content %}{% endblock %}
     </div>
 </body>
 </html>
-
-
