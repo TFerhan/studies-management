@@ -1,123 +1,131 @@
-/* style.css */
-
-/* Reset some default styles */
-body,
-html {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  font-size: 16px;
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
-/* General styles for layout */
+.navbar {
+    background-color: #333;
+    overflow: hidden;
+}
+
+.navbar a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
 .container {
-  width: 90%;
-  margin: 0 auto;
-  padding: 20px;
+    margin: 20px;
 }
 
-/* Header styles */
-header {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 0;
-  text-align: center;
-}
-
-/* Main styles */
-main {
-  padding: 20px 0;
-}
-
-/* Footer styles */
-footer {
-  text-align: center;
-  padding: 10px 0;
-  background-color: #f9f9f9;
-  color: #333;
-}
-
-/* Style for login form */
-form {
-  margin: 0 auto;
-  max-width: 300px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-}
-
-h2 {
-  color: #007bff;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="password"],
-input[type="submit"] {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  color: #555;
-}
-
-input[type="submit"] {
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-input[type="submit"]:hover {
-  background-color: #0056b3;
-}
-
-/* Style for tables */
 table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table, th, td {
-  border: 1px solid #ddd;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 th, td {
-  padding: 8px;
-  text-align: left;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
-th {
-  background-color: #f2f2f2;
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
 }
 
-/* Style for buttons */
+form {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: auto;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+.form-container input[type=text], .form-container input[type=number], .form-container input[type=date] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+/* Add this to your existing style.css */
+
+.hero-section {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.hero-section h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.hero-section p {
+    font-size: 1.2em;
+    color: #555;
+}
+
+.feature-section {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 50px;
+}
+
+.feature {
+    text-align: center;
+    max-width: 300px;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feature h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
 .btn {
-  display: inline-block;
-  padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 4px;
-}
-
-.btn-ajouter {
-  background-color: #28a745;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 .btn:hover {
-  background-color: #0056b3;
-}
-
-/* Responsive styles */
-@media screen and (max-width: 768px) {
-  .container {
-    width: 95%;
-  }
+    background-color: #45a049;
 }
