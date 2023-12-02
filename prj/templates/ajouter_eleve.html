@@ -63,6 +63,28 @@
         <br>
         {% endfor %}
     {% endif %}
+    <br>
+      {{ form.formation.label }} <br>
+      {{ form.formation }}
+    <br>
+    {% if form.formation.errors %}
+        {% for error in form.formation.errors %}
+        <b style="color:tomato;"> {{ error }} </b> 
+        <br>
+        {% endfor %}
+    {% endif %}
+    <br>
+      {{ form.test.label }} <br>
+      {{ form.test }}
+    <br>
+    {% if form.test.errors %}
+        {% for error in form.test.errors %}
+        <b style="color:tomato;"> {{ error }} </b> 
+        <br>
+        {% endfor %}
+    {% endif %}
+    
+    
     {{ form.csrf_token }}
     {{ form.submit }}
 
