@@ -116,7 +116,7 @@ def ajouter_eleve():
         
 
         cur.close()
-        flash('Ajout avec succès! ideleve={}, idformation={}'.format(ideleve, idformation), 'success')
+        flash('Ajout avec succès! ', 'success')
 
         return  redirect(url_for('ajouter_cours', ideleve=ideleve, idformation=idformation))
 
@@ -137,17 +137,26 @@ def ajouter_cours():
     cur.close()
 
     form.cours.choices = [(cours[0], cours[1]) for cours in courses]
-    minf = min_formation(idformation)
-    form.nb_seances.validators[0].min = minf
-    form.nb_seances.validators[0].message = f"{minf} seances au minimum "
+    form.nb_seances.data = min_formation(idformation)
+    form.nb_seances.validators[0].min = min_formation(idformation)
+    form.nb_seances.validators[0].message = f"{min_formation(idformation)} seances au minimum "
 
     if form.validate_on_submit():
         idcours = form.cours.data
         
         cur = mysql.connection.cursor()
-        # cur.execute("SELECT test from eleve where ideleve = %s", (ideleve,))
-        # test = cur.fetchone()
-        # cur.close()
+        cur.execute("SELECT test from eleve where id_eleve = %s", (ideleve,))
+        test = cur.fetchone()[0]
+        cur.close()
+        print(test)
+        if test:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO eleve_has_cours (ideleve, idcours, nb_achete) values (%s, %s, 0)", (ideleve, idcours,))
+            cur.execute("INSERT INTO facture (somme_total, date_paiement, eleve) VALUES (%s, CURDATE(), %s)", (150, ideleve))
+            mysql.connection.commit()
+            flash("Facture ajoutée avec success!", 'success')
+            return redirect(url_for('index'))
+
         
         
 
@@ -159,7 +168,6 @@ def ajouter_cours():
             return redirect(url_for('index'))
         nb_seances = form.nb_seances.data
 
-        flash('Cours ajouté avec succès! grp = {} et idcours = {} '.format(group_disp, idcours), 'success')
         return redirect(url_for('affectation', idcours = idcours, ideleve = ideleve, idformation = idformation, nb_seances = nb_seances))
 
     return render_template('ajouter_cours.html', ideleve=ideleve, form=form, idformation=idformation)
@@ -189,9 +197,6 @@ def affectation():
     mysql.connection.commit()
     cur.close()
     
-    
-    
-    flash('nb seance = {} et type = {} somme = {}'.format(nb_seances, type(nb_seances), somme), 'success')
 
     if request.method == 'POST':
         group_voulu = request.form.getlist('group_voulu[]')
