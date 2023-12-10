@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Facture{% endblock %}
+
+{% block content %}
+    <h2>Facture</h2>
+    <p>ID de l'élève : {{ ideleve }}</p>
+    <p>ID du cours : {{ idcours }}</p>
+    <p>Nombre de séances achetées : {{ nb_seances_ach }}</p>
+    <p>Prix à payer : {{ prix_a_payer }}</p>
+    <p>Merci pour votre achat !</p>
+{% endblock %}
