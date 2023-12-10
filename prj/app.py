@@ -454,6 +454,111 @@ def delete_prof(idenseignant):
     cur.execute('DELETE FROM enseignant WHERE idenseignant = %s', (idenseignant,))
     mysql.connection.commit()
     cur.close()
-    return redirect(url_for('profs_list')) 
+    return redirect(url_for('profs_list'))
+
+@app.route('/gerer_abs_groupe/<int:idgroupe>', methods=['GET', 'POST']) 
+def gerer_abs_groupe(idgroupe):
+        
+        cur = mysql.connection.cursor()
+        cur.execute(''' 
+            SELECT e.id_eleve, e.prenom_ev, e.nom_ev
+            FROM eleve e
+            INNER JOIN eleve_has_groupe eg ON e.id_eleve = eg.ideleve
+            WHERE eg.idgroupe = %s
+        ''', (idgroupe,))
+        eleves_groupe = cur.fetchall()
+        cur.execute('SELECT idséance FROM séance WHERE idgroupe = %s',(idgroupe,))
+        idseance=cur.fetchone()
+        cur.execute('SELECT nb_abscence FROM eleve_has_seance WHERE ideleve IN (SELECT ideleve FROM eleve_has_groupe WHERE idgroupe = %s) AND idseance = %s', (idgroupe,idseance,))
+        nbs=cur.fetchall()
+        cur.execute('SELECT idcours FROM séance WHERE idséance=%s',(idseance,))
+        idcours=cur.fetchone()
+        cur.execute('SELECT nb_seances_rest FROM eleve_has_cours WHERE idcours=%s AND ideleve IN (SELECT ideleve FROM eleve_has_groupe WHERE idgroupe = %s)',(idcours,idgroupe,))
+        nombre_seances_rest=cur.fetchall()
+        cur.close()
+
+        return render_template('gerer_abs.html', eleves_groupe=eleves_groupe, idgroupe=idgroupe,nbs=nbs,nombre_seances_rest=nombre_seances_rest)
+@app.route('/valider_absences/<int:idgroupe>', methods=['POST'])
+def valider_absences(idgroupe):
+    if request.method == 'POST':
+        eleves_absents_ids = request.form.getlist('eleves_absents[]')
+        cur = mysql.connection.cursor()
+
+        cur.execute('SELECT idséance FROM séance WHERE idgroupe = %s', (idgroupe,))
+        idseance = cur.fetchone()[0]
+
+        # Récupérer tous les élèves du groupe
+        cur.execute('SELECT ideleve FROM eleve_has_groupe WHERE idgroupe = %s', (idgroupe,))
+        eleves_du_groupe = cur.fetchall()
+        eleves_du_groupe_ids = [eleve[0] for eleve in eleves_du_groupe]
+
+        for ideleve in eleves_du_groupe_ids:
+            if str(ideleve) not in eleves_absents_ids:
+                # Mettre à jour nb_seances_rest pour les étudiants présents non absents
+                cur.execute('''UPDATE eleve_has_cours
+                               SET nb_seances_rest = nb_seances_rest - 1
+                               WHERE ideleve = %s AND idcours IN
+                                   (SELECT idcours FROM séance WHERE idséance = %s)''', (ideleve, idseance))
+                mysql.connection.commit()
+
+        for ideleve in eleves_absents_ids:
+            # Incrémenter le nb_abscences des élèves absents
+            cur.execute('''UPDATE eleve_has_seance
+                           SET nb_abscence = nb_abscence + 1
+                           WHERE ideleve = %s AND idseance = %s''', (ideleve, idseance))
+            mysql.connection.commit()
+
+            # Vérifier si le nombre d'absences est supérieur ou égal à 2
+            cur.execute('''SELECT nb_abscence FROM eleve_has_seance
+                           WHERE ideleve = %s AND idseance = %s''', (ideleve, idseance))
+            nb_abscence = cur.fetchone()[0]
+
+            if nb_abscence >= 2:
+                # Mettre à jour nb_seances_rest si nb_abscence >= 2
+                cur.execute('''UPDATE eleve_has_cours
+                               SET nb_seances_rest = nb_seances_rest - 1
+                               WHERE ideleve = %s AND idcours IN
+                                   (SELECT idcours FROM séance WHERE idséance = %s)''', (ideleve, idseance))
+                mysql.connection.commit()        
+
+        cur.close()
+        flash('Les absences ont été enregistrées avec succès!', 'success')
+        return redirect(url_for('gerer_abs_groupe', idgroupe=idgroupe))
+    
+@app.route('/acheter_seance/<int:ideleve>', methods=['GET', 'POST'])
+def acheter_seance(ideleve):
+    form = AchtSeanceForm()
+
+    if form.validate_on_submit():
+        idcours = form.idcours.data
+        idgroupe = form.idgroupe.data  
+        nb_seances_ach = form.nb_seances_ach.data
+        prix_a_payer = 150 * nb_seances_ach  
+
+        cur = mysql.connection.cursor()
+        print(idgroupe)
+        cur.execute('SELECT idséance FROM séance WHERE idgroupe = %s',(idgroupe,))
+        idseance = cur.fetchone()[0]
+
+        cur.execute('''UPDATE eleve_has_cours
+               SET nb_seances_achetees = %s
+               WHERE ideleve = %s AND idcours = %s''', (nb_seances_ach, ideleve, idcours))
+
+        cur.execute('''UPDATE eleve_has_cours
+               SET nb_seances_rest = %s
+               WHERE ideleve = %s AND idcours = %s''', (nb_seances_ach, ideleve, idcours))
+
+        cur.execute('''UPDATE eleve_has_seance
+               SET nb_abscence = 0
+               WHERE ideleve = %s AND idseance = %s''', (ideleve, idseance))
+
+
+        mysql.connection.commit()
+
+        return render_template('mafacture.html', ideleve=ideleve, idcours=idcours, idgroupe=idgroupe, nb_seances_ach=nb_seances_ach, prix_a_payer=prix_a_payer)
+
+    return render_template('acheter_seance.html', form=form, ideleve=ideleve)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
