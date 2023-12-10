@@ -57,3 +57,9 @@ class Ajtseance(FlaskForm):
 
 class Selectgrp(FlaskForm):
     group = SelectMultipleField('Selectionne un groupe', coerce= int, validators = [DataRequired()])
+
+class AchtSeanceForm(FlaskForm):
+    idcours=IntegerField('L id du cours ou vous voulez ajouter des seances',validators=[DataRequired()])
+    idgroupe=(IntegerField('L id du groupe'))
+    nb_seances_ach=IntegerField('nombre de seances a ajouter',validators=[DataRequired()])
+    submit = SubmitField('Valider')
