@@ -15,6 +15,7 @@
                 <th>Nombre d'absences</th>
                 <th>Nombre de séances restantes</th>
                 <th>Statut</th>
+                <th>Actions</th>
                 <th>Actions</th> <!-- Ajout de la colonne pour les actions -->
             </tr>
         </thead>
@@ -38,12 +39,13 @@
                     </td>
                     <td>
                         {% if (nombre_seances_rest[loop.index0])[0] == 1 %}
-                            <form action="{{ url_for('affectation', idgroupe = idgroupe, ideleve = ideleve)}}" method="post">
+                            <form action="{{ url_for('ajouter_cours', idcours = idcours, ideleve = eleve[0], p = 1, idformation = idformation)}}" method="post">
                                 <button type="submit">Ajouter</button>
                             </form>
+                        {% endif %}
                         {% if (nombre_seances_rest[loop.index0])[0] == 0 %}
                             <form action="{{ url_for('delete_eleve_groupe',  id_eleve=eleve[0])}}" method="post">
-                                <button type="submit">Ajouter</button>
+                                <button type="submit">Supprimer</button>
                             </form>
                         {% endif %}
                     </td>
