@@ -1,6 +1,6 @@
 from flask import Flask, render_template, abort, request, flash
 from flask import session, redirect, url_for
-from forms import AjtEleveForm, AjtGroupeForm, AjtSeanceForm, AjtFactureForm, AjtFormationForm, LoginForm, AjtProf, Ajtcours, Selectgrp, AjtFacture
+from forms import AjtEleveForm, AjtGroupeForm, AjtSeanceForm, AjtFactureForm, AjtFormationForm, LoginForm, AjtProf, Ajtcours, Selectgrp, AchtSeanceForm
 from flask_mysqldb import MySQL
 from ast import literal_eval
 
@@ -127,6 +127,7 @@ def ajouter_eleve():
 def ajouter_cours():
     ideleve = request.args.get('ideleve')
     idformation = request.args.get('idformation')
+    print(type(idformation))
     
     
 
@@ -174,7 +175,7 @@ def ajouter_cours():
 
 
 def min_formation(idformation):
-    if idformation == 2:
+    if int(idformation) == 2:
         return 8
     else:
         return 2
@@ -201,11 +202,15 @@ def affectation():
     if request.method == 'POST':
         group_voulu = request.form.getlist('group_voulu[]')
         cur = mysql.connection.cursor()
+        cur.execute("SELECT idséance from séance where idgroupe in %s", (group_voulu,))
+        séances_id = cur.fetchall()
         cur.execute("UPDATE groupe SET nombre_eleves = nombre_eleves + 1 where idgroupe in %s ", (group_voulu,))
         for g in group_voulu:
             cur.execute("INSERT INTO eleve_has_groupe (ideleve, idgroupe) values (%s, %s)", (ideleve, g) )
+        for s in séances_id:
+            cur.execute("INSERT INTO eleve_has_seance (ideleve, idseance, abscence) values (%s, %s, 0)", (ideleve, s,))
         cur.execute("INSERT INTO facture (somme_total, date_paiement, eleve) VALUES (%s, CURDATE(), %s)", (somme, ideleve))
-        cur.execute("INSERT INTO eleve_has_cours (ideleve, idcours, nb_achete) values (%s, %s, %s)", (ideleve, idcours, nb_seances))
+        cur.execute("INSERT INTO eleve_has_cours (ideleve, idcours, nb_achete, nb_rest) values (%s, %s, %s, %s)", (ideleve, idcours, nb_seances, nb_seances))
         mysql.connection.commit()
         cur.close()
         flash("Facture ajouté avec success", 'success')
@@ -235,11 +240,22 @@ def groupe_disponible(cours):
 @app.route('/delete_eleve/<int:id_eleve>', methods=['POST'])
 def delete_eleve(id_eleve):
     cur = mysql.connection.cursor()
+    cur.execute('UPDATE groupe SET nombre_eleves = nombre_eleves - 1 where idgroupe in (select idgroupe from eleve_has_groupe where ideleve = %s)', (id_eleve,))
     cur.execute('DELETE FROM eleve WHERE id_eleve = %s', (id_eleve,))
     mysql.connection.commit()
     cur.close()
     return redirect(url_for('eleves'))
 
+@app.route('/delete_eleve_groupe/<int:id_eleve>', methods=['POST'])
+def delete_eleve_groupe(id_eleve):
+    cur = mysql.connection.cursor()
+    cur.execute('UPDATE groupe SET nombre_eleves = nombre_eleves - 1 where idgroupe in (select idgroupe from eleve_has_groupe where ideleve = %s)', (id_eleve,))
+    cur.execute('DELETE from eleve_has_groupe where id_eleve = %s', (id_eleve,))
+    cur.execute('DELETE from eleve_has_cours where id_eleve = %s', (id_eleve,))
+    cur.execute('DELETE from eleve_has_seance where id_eleve = %s', (id_eleve,))
+    mysql.connection.commit()
+    cur.close()
+    return redirect(url_for('gerer_abs_groupe'))
 
 @app.route('/groupes')
 def groupes():
@@ -250,70 +266,70 @@ def groupes():
     return render_template("groupes.html", groupe_data = groupe_data)
 
 
-@app.route('/ajouter_groupe', methods=['GET', 'POST'])
-def ajouter_groupe():
-    form = AjtGroupeForm()
+# @app.route('/ajouter_groupe', methods=['GET', 'POST'])
+# def ajouter_groupe():
+#     form = AjtGroupeForm()
 
-    if form.validate_on_submit():
-        # Retrieve form data
-        nombre_eleves = form.nombre_eleves.data
+#     if form.validate_on_submit():
+#         # Retrieve form data
+#         nombre_eleves = form.nombre_eleves.data
 
-        # SQL query to insert data into the table
-        insert_query = """
-        INSERT INTO groupe (nombre_eleves)
-        VALUES (%s)
-        """
-        cur = mysql.connection.cursor()
+#         # SQL query to insert data into the table
+#         insert_query = """
+#         INSERT INTO groupe (nombre_eleves)
+#         VALUES (%s)
+#         """
+#         cur = mysql.connection.cursor()
 
-        # Execute the query with the form data
-        cur.execute(insert_query, (nombre_eleves,))
-        mysql.connection.commit()
-        cur.close()
-        flash('Ajout avec succès!', 'success')
+#         # Execute the query with the form data
+#         cur.execute(insert_query, (nombre_eleves,))
+#         mysql.connection.commit()
+#         cur.close()
+#         flash('Ajout avec succès!', 'success')
 
-        return redirect(url_for('groupes'))  # Assuming you have a route named 'groupes'
-    return render_template('ajouter_groupe.html', form=form)
+#         return redirect(url_for('groupes'))  # Assuming you have a route named 'groupes'
+#     return render_template('ajouter_groupe.html', form=form)
 
-@app.route('/delete_groupe/<int:idgroupe>', methods=['POST'])
-def delete_groupe(idgroupe):
-    cur = mysql.connection.cursor()
-    cur.execute('DELETE FROM groupe WHERE idgroupe = %s', (idgroupe,))
-    mysql.connection.commit()
-    cur.close()
-    return redirect(url_for('groupes')) 
+# @app.route('/delete_groupe/<int:idgroupe>', methods=['POST'])
+# def delete_groupe(idgroupe):
+#     cur = mysql.connection.cursor()
+#     cur.execute('DELETE FROM groupe WHERE idgroupe = %s', (idgroupe,))
+#     mysql.connection.commit()
+#     cur.close()
+#     return redirect(url_for('groupes')) 
 
-@app.route('/ajouter_seance', methods=['GET', 'POST'])
-def ajouter_seance():
-    form = AjtSeanceForm()
+# @app.route('/ajouter_seance', methods=['GET', 'POST'])
+# def ajouter_seance():
+#     form = AjtSeanceForm()
 
-    if form.validate_on_submit():
-        # Retrieve form data
-        type_séance = form.type_seance.data
+#     if form.validate_on_submit():
+#         # Retrieve form data
+#         type_séance = form.type_seance.data
 
-        # SQL query to insert data into the table
-        insert_query = """
-        INSERT INTO séance (type_séance)
-        VALUES (%s)
-        """
-        cur = mysql.connection.cursor()
+#         # SQL query to insert data into the table
+#         insert_query = """
+#         INSERT INTO séance (type_séance)
+#         VALUES (%s)
+#         """
+#         cur = mysql.connection.cursor()
 
-        # Execute the query with the form data
-        cur.execute(insert_query, (type_séance,))
-        mysql.connection.commit()
-        cur.close()
-        flash('Ajout avec succès!', 'success')
+#         # Execute the query with the form data
+#         cur.execute(insert_query, (type_séance,))
+#         mysql.connection.commit()
+#         cur.close()
+#         flash('Ajout avec succès!', 'success')
 
-        return redirect(url_for('seances'))  # Assuming you have a route named 'seances'
-    return render_template('ajouter_seance.html', form=form)
+#         return redirect(url_for('seances'))  # Assuming you have a route named 'seances'
+#     return render_template('ajouter_seance.html', form=form)
 
 
-@app.route('/delete_seance/<int:idseance>', methods=['POST'])
-def delete_seance(idseance):
-    cur = mysql.connection.cursor()
-    cur.execute('DELETE FROM séance WHERE idséance = %s', (idseance,))
-    mysql.connection.commit()
-    cur.close()
-    return redirect(url_for('seances'))
+# @app.route('/delete_seance/<int:idseance>', methods=['POST'])
+# def delete_seance(idseance):
+#     cur = mysql.connection.cursor()
+#     cur.execute('DELETE FROM séance WHERE idséance = %s', (idseance,))
+#     mysql.connection.commit()
+#     cur.close()
+#     return redirect(url_for('seances'))
 
 
 @app.route('/seances')
@@ -325,30 +341,30 @@ def seances():
     return render_template("seances.html", seances_data=seances_data)
 
 
-@app.route('/ajouter_facture', methods=['GET', 'POST'])
-def ajouter_facture():
-    form = AjtFactureForm()
+# @app.route('/ajouter_facture', methods=['GET', 'POST'])
+# def ajouter_facture():
+#     form = AjtFactureForm()
 
-    if form.validate_on_submit():
-        # Retrieve form data
-        somme_total = form.somme_total.data
-        date_paiement = form.date_paiement.data
+#     if form.validate_on_submit():
+#         # Retrieve form data
+#         somme_total = form.somme_total.data
+#         date_paiement = form.date_paiement.data
 
-        # SQL query to insert data into the table
-        insert_query = """
-        INSERT INTO facture (somme_total, date_paiement)
-        VALUES (%s, %s)
-        """
-        cur = mysql.connection.cursor()
+#         # SQL query to insert data into the table
+#         insert_query = """
+#         INSERT INTO facture (somme_total, date_paiement)
+#         VALUES (%s, %s)
+#         """
+#         cur = mysql.connection.cursor()
 
-        # Execute the query with the form data
-        cur.execute(insert_query, (somme_total, date_paiement))
-        mysql.connection.commit()
-        cur.close()
-        flash('Ajout avec succès!', 'success')
+#         # Execute the query with the form data
+#         cur.execute(insert_query, (somme_total, date_paiement))
+#         mysql.connection.commit()
+#         cur.close()
+#         flash('Ajout avec succès!', 'success')
 
-        return redirect(url_for('factures'))  # Assuming you have a route named 'factures'
-    return render_template('ajouter_facture.html', form=form)
+#         return redirect(url_for('factures'))  # Assuming you have a route named 'factures'
+#     return render_template('ajouter_facture.html', form=form)
 
 @app.route('/factures')
 def factures():
@@ -367,47 +383,43 @@ def delete_facture(id_facture):
     return redirect(url_for('factures'))
 
 
-@app.route('/ajouter_formation', methods=['GET', 'POST'])
-def ajouter_formation():
-    form = AjtFormationForm()
+# @app.route('/ajouter_formation', methods=['GET', 'POST'])
+# def ajouter_formation():
+#     form = AjtFormationForm()
 
-    if form.validate_on_submit():
-        # Retrieve form data
-        nom_formation = form.nom_formation.data
+#     if form.validate_on_submit():
+#         # Retrieve form data
+#         nom_formation = form.nom_formation.data
 
-        # SQL query to insert data into the table
-        insert_query = """
-        INSERT INTO formation (nom_formation)
-        VALUES (%s)
-        """
-        cur = mysql.connection.cursor()
+#         # SQL query to insert data into the table
+#         insert_query = """
+#         INSERT INTO formation (nom_formation)
+#         VALUES (%s)
+#         """
+#         cur = mysql.connection.cursor()
 
-        # Execute the query with the form data
-        cur.execute(insert_query, (nom_formation,))
-        mysql.connection.commit()
-        cur.close()
-        flash('Ajout avec succès!', 'success')
+#         # Execute the query with the form data
+#         cur.execute(insert_query, (nom_formation,))
+#         mysql.connection.commit()
+#         cur.close()
+#         flash('Ajout avec succès!', 'success')
 
-        return redirect(url_for('formations')) 
-    return render_template('ajouter_formation.html', form=form)
+#         return redirect(url_for('formations')) 
+#     return render_template('ajouter_formation.html', form=form)
 
 
-@app.route('/delete_formation/<int:id_formation>', methods=['POST'])
-def delete_formation(id_formation):
-    cur = mysql.connection.cursor()
-    cur.execute('DELETE FROM formation WHERE idformation = %s', (id_formation,))
-    mysql.connection.commit()
-    cur.close()
-    return redirect(url_for('formations'))
+# @app.route('/delete_formation/<int:id_formation>', methods=['POST'])
+# def delete_formation(id_formation):
+#     cur = mysql.connection.cursor()
+#     cur.execute('DELETE FROM formation WHERE idformation = %s', (id_formation,))
+#     mysql.connection.commit()
+#     cur.close()
+#     return redirect(url_for('formations'))
 
 
 @app.route('/formations')
 def formations():
-    cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM formation')
-    formations_data = cur.fetchall()
-    cur.close()
-    return render_template("formations.html", formations_data=formations_data)
+    return render_template("formations.html")
 
 
 
@@ -454,30 +466,8 @@ def delete_prof(idenseignant):
     cur.execute('DELETE FROM enseignant WHERE idenseignant = %s', (idenseignant,))
     mysql.connection.commit()
     cur.close()
-    return redirect(url_for('profs_list'))
+    return redirect(url_for('profs_list')) 
 
-@app.route('/gerer_abs_groupe/<int:idgroupe>', methods=['GET', 'POST']) 
-def gerer_abs_groupe(idgroupe):
-        
-        cur = mysql.connection.cursor()
-        cur.execute(''' 
-            SELECT e.id_eleve, e.prenom_ev, e.nom_ev
-            FROM eleve e
-            INNER JOIN eleve_has_groupe eg ON e.id_eleve = eg.ideleve
-            WHERE eg.idgroupe = %s
-        ''', (idgroupe,))
-        eleves_groupe = cur.fetchall()
-        cur.execute('SELECT idséance FROM séance WHERE idgroupe = %s',(idgroupe,))
-        idseance=cur.fetchone()
-        cur.execute('SELECT nb_abscence FROM eleve_has_seance WHERE ideleve IN (SELECT ideleve FROM eleve_has_groupe WHERE idgroupe = %s) AND idseance = %s', (idgroupe,idseance,))
-        nbs=cur.fetchall()
-        cur.execute('SELECT idcours FROM séance WHERE idséance=%s',(idseance,))
-        idcours=cur.fetchone()
-        cur.execute('SELECT nb_seances_rest FROM eleve_has_cours WHERE idcours=%s AND ideleve IN (SELECT ideleve FROM eleve_has_groupe WHERE idgroupe = %s)',(idcours,idgroupe,))
-        nombre_seances_rest=cur.fetchall()
-        cur.close()
-
-        return render_template('gerer_abs.html', eleves_groupe=eleves_groupe, idgroupe=idgroupe,nbs=nbs,nombre_seances_rest=nombre_seances_rest)
 @app.route('/valider_absences/<int:idgroupe>', methods=['POST'])
 def valider_absences(idgroupe):
     if request.method == 'POST':
@@ -496,27 +486,27 @@ def valider_absences(idgroupe):
             if str(ideleve) not in eleves_absents_ids:
                 # Mettre à jour nb_seances_rest pour les étudiants présents non absents
                 cur.execute('''UPDATE eleve_has_cours
-                               SET nb_seances_rest = nb_seances_rest - 1
-                               WHERE ideleve = %s AND idcours IN
+                               SET nb_rest = nb_rest - 1
+                               WHERE ideleve = %s AND nb_rest <> 0 and idcours IN
                                    (SELECT idcours FROM séance WHERE idséance = %s)''', (ideleve, idseance))
                 mysql.connection.commit()
 
         for ideleve in eleves_absents_ids:
             # Incrémenter le nb_abscences des élèves absents
             cur.execute('''UPDATE eleve_has_seance
-                           SET nb_abscence = nb_abscence + 1
+                           SET abscence = abscence + 1
                            WHERE ideleve = %s AND idseance = %s''', (ideleve, idseance))
             mysql.connection.commit()
 
             # Vérifier si le nombre d'absences est supérieur ou égal à 2
-            cur.execute('''SELECT nb_abscence FROM eleve_has_seance
+            cur.execute('''SELECT abscence FROM eleve_has_seance
                            WHERE ideleve = %s AND idseance = %s''', (ideleve, idseance))
             nb_abscence = cur.fetchone()[0]
 
             if nb_abscence >= 2:
                 # Mettre à jour nb_seances_rest si nb_abscence >= 2
                 cur.execute('''UPDATE eleve_has_cours
-                               SET nb_seances_rest = nb_seances_rest - 1
+                               SET nb_rest = nb_rest - 1
                                WHERE ideleve = %s AND idcours IN
                                    (SELECT idcours FROM séance WHERE idséance = %s)''', (ideleve, idseance))
                 mysql.connection.commit()        
@@ -524,7 +514,33 @@ def valider_absences(idgroupe):
         cur.close()
         flash('Les absences ont été enregistrées avec succès!', 'success')
         return redirect(url_for('gerer_abs_groupe', idgroupe=idgroupe))
-    
+
+
+
+@app.route('/gerer_abs_groupe/<int:idgroupe>', methods=['GET', 'POST']) 
+def gerer_abs_groupe(idgroupe):
+        
+        cur = mysql.connection.cursor()
+        cur.execute(''' 
+            SELECT e.id_eleve, e.prenom_ev, e.nom_ev
+            FROM eleve e
+            INNER JOIN eleve_has_groupe eg ON e.id_eleve = eg.ideleve
+            WHERE eg.idgroupe = %s
+        ''', (idgroupe,))
+        eleves_groupe = cur.fetchall()
+        cur.execute('SELECT idséance FROM séance WHERE idgroupe = %s',(idgroupe,))
+        idseance=cur.fetchone()
+        cur.execute('SELECT abscence FROM eleve_has_seance WHERE ideleve IN (SELECT ideleve FROM eleve_has_groupe WHERE idgroupe = %s) AND idseance = %s', (idgroupe,idseance,))
+        nbs=cur.fetchall()
+        cur.execute('SELECT idcours FROM séance WHERE idséance=%s',(idseance,))
+        idcours=cur.fetchone()
+        cur.execute('SELECT nb_rest FROM eleve_has_cours WHERE idcours=%s AND ideleve IN (SELECT ideleve FROM eleve_has_groupe WHERE idgroupe = %s)',(idcours,idgroupe,))
+        nombre_seances_rest=cur.fetchall()
+        cur.close()
+
+        return render_template('gerer_abs.html', eleves_groupe=eleves_groupe, idgroupe=idgroupe,nbs=nbs,nombre_seances_rest=nombre_seances_rest)
+
+
 @app.route('/acheter_seance/<int:ideleve>', methods=['GET', 'POST'])
 def acheter_seance(ideleve):
     form = AchtSeanceForm()
@@ -558,6 +574,7 @@ def acheter_seance(ideleve):
         return render_template('mafacture.html', ideleve=ideleve, idcours=idcours, idgroupe=idgroupe, nb_seances_ach=nb_seances_ach, prix_a_payer=prix_a_payer)
 
     return render_template('acheter_seance.html', form=form, ideleve=ideleve)
+
 
 
 if __name__ == "__main__":
