@@ -1,0 +1,73 @@
+<!-- courses.html -->
+{% extends 'base.html' %}
+
+{% block title %}Formations{% endblock %}
+
+{% block content %}
+    <div class="hero-section">
+        <h1>Formations </h1>
+        <p>Explorer les cours offerts dans differents catégories.</p>
+    </div>
+
+    <div class="feature-section">
+        <!-- Langues Table -->
+        <div class="feature">
+            <h2>Langues</h2>
+            <table>
+                <tr>
+                    <th>Language</th>
+                </tr>
+                {% for language in ["Français", "Anglais", "Allemand"] %}
+                    <tr>
+                        <td>{{ language }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- Cours de Soutien Table -->
+        <div class="feature">
+            <h2>Cours de Soutien</h2>
+            <table>
+                <tr>
+                    <th>Matières</th>
+                </tr>
+                {% for subject in ["Francais 1 Bac", "Histoire/Geo 1 Bac", "Arabe 1 Bac", "Philosophie 2 Bac", "Maths 2 Bac", "Physique 2 Bac"] %}
+                    <tr>
+                        <td>{{ subject }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- Softwars Table -->
+        <div class="feature">
+            <h2>Softwars</h2>
+            <table>
+                <tr>
+                    <th>Development</th>
+                </tr>
+                {% for area in ["Web Development", "Mobile Development", "Embedded System Development"] %}
+                    <tr>
+                        <td>{{ area }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- Softskills Table -->
+        <div class="feature">
+            <h2>Softskills</h2>
+            <table>
+                <tr>
+                    <th>Skill</th>
+                </tr>
+                {% for skill in ["Public Speaking", "Agile", "Team Management"] %}
+                    <tr>
+                        <td>{{ skill }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
