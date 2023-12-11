@@ -118,7 +118,7 @@ def ajouter_eleve():
         cur.close()
         flash('Ajout avec succès! ', 'success')
 
-        return  redirect(url_for('ajouter_cours', ideleve=ideleve, idformation=idformation))
+        return  redirect(url_for('ajouter_cours', ideleve=ideleve, idformation=idformation, p = 0))
 
     return render_template('ajouter_eleve.html', form=form)
 
@@ -127,51 +127,73 @@ def ajouter_eleve():
 def ajouter_cours():
     ideleve = request.args.get('ideleve')
     idformation = request.args.get('idformation')
-    print(type(idformation))
+    idcours = request.args.get('idcours')
     
+    p = request.args.get('p')
+    p = int(p)
     
-
-    form = Ajtcours()
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * from cours where formation_idformation = %s ", (idformation,))
-    courses = cur.fetchall()
-    cur.close()
-
-    form.cours.choices = [(cours[0], cours[1]) for cours in courses]
-    form.nb_seances.data = min_formation(idformation)
-    form.nb_seances.validators[0].min = min_formation(idformation)
-    form.nb_seances.validators[0].message = f"{min_formation(idformation)} seances au minimum "
-
-    if form.validate_on_submit():
-        idcours = form.cours.data
+    if p == 1:
         
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT test from eleve where id_eleve = %s", (ideleve,))
-        test = cur.fetchone()[0]
-        cur.close()
-        print(test)
-        if test:
+        form = AchtSeanceForm()
+        if form.validate_on_submit():
+            nbseance = form.nb_seances_ach.data
+            print(form.nb_seances_ach.data)
+            print(idcours)
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO eleve_has_cours (ideleve, idcours, nb_achete) values (%s, %s, 0)", (ideleve, idcours,))
-            cur.execute("INSERT INTO facture (somme_total, date_paiement, eleve) VALUES (%s, CURDATE(), %s)", (150, ideleve))
+            cur.execute("UPDATE eleve_has_cours SET nb_achete = nb_achete + %s, nb_rest = nb_rest + %s WHERE idcours = %s AND ideleve = %s", (nbseance, nbseance, idcours, ideleve))
+            cur.execute("INSERT INTO facture (somme_total, date_paiement, eleve) VALUES (%s, CURDATE(), %s)", (150*nbseance, ideleve))
             mysql.connection.commit()
-            flash("Facture ajoutée avec success!", 'success')
+            cur.close()
+            flash('Facture ajoutée', 'success')
             return redirect(url_for('index'))
 
-        
-        
+
+    
+    
+    
+    if p == 0:
+        idformation = request.args.get('idformation')
+        form = Ajtcours()
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * from cours where formation_idformation = %s ", (idformation,))
+        courses = cur.fetchall()
+        cur.close()
+
+        form.cours.choices = [(cours[0], cours[1]) for cours in courses]
+        form.nb_seances.data = min_formation(idformation)
+        form.nb_seances.validators[0].min = min_formation(idformation)
+        form.nb_seances.validators[0].message = f"{min_formation(idformation)} seances au minimum "
+
+        if form.validate_on_submit():
+            idcours = form.cours.data
+            
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT test from eleve where id_eleve = %s", (ideleve,))
+            test = cur.fetchone()[0]
+            cur.close()
+            print(test)
+            if test:
+                cur = mysql.connection.cursor()
+                cur.execute("INSERT INTO eleve_has_cours (ideleve, idcours, nb_achete) values (%s, %s, 0)", (ideleve, idcours,))
+                cur.execute("INSERT INTO facture (somme_total, date_paiement, eleve) VALUES (%s, CURDATE(), %s)", (150, ideleve))
+                mysql.connection.commit()
+                flash("Facture ajoutée avec success!", 'success')
+                return redirect(url_for('index'))
+
+            
+            
 
 
-        # Do something with idcours if needed
-        group_disp = groupe_disponible(idcours)
-        if not group_disp:
-            flash("Tous les groupes sont remplis", "error")
-            return redirect(url_for('index'))
-        nb_seances = form.nb_seances.data
+            # Do something with idcours if needed
+            group_disp = groupe_disponible(idcours)
+            if not group_disp:
+                flash("Tous les groupes sont remplis", "error")
+                return redirect(url_for('index'))
+            nb_seances = form.nb_seances.data
 
-        return redirect(url_for('affectation', idcours = idcours, ideleve = ideleve, idformation = idformation, nb_seances = nb_seances))
+            return redirect(url_for('affectation', idcours = idcours, ideleve = ideleve, nb_seances = nb_seances))
 
-    return render_template('ajouter_cours.html', ideleve=ideleve, form=form, idformation=idformation)
+    return render_template('ajouter_cours.html', ideleve=ideleve, form=form, idformation=idformation,   p = p, idcours= idcours )
 
 
 def min_formation(idformation):
@@ -188,7 +210,6 @@ def affectation():
     
     
     ideleve = request.args.get('ideleve')
-    idformation = request.args.get('idformation')
     idcours = request.args.get('idcours')
     group_disp = groupe_disponible(idcours)
     nb_seances = request.args.get('nb_seances')
@@ -216,7 +237,7 @@ def affectation():
         flash("Facture ajouté avec success", 'success')
         return redirect(url_for('index'))
     
-    return render_template('affectation.html', ideleve=ideleve, form=form, idformation=idformation, idcours = idcours, group_disp = group_disp, nb_seances = nb_seances )
+    return render_template('affectation.html', ideleve=ideleve, form=form,  idcours = idcours, group_disp = group_disp, nb_seances = nb_seances )
 
 
 
@@ -250,12 +271,12 @@ def delete_eleve(id_eleve):
 def delete_eleve_groupe(id_eleve):
     cur = mysql.connection.cursor()
     cur.execute('UPDATE groupe SET nombre_eleves = nombre_eleves - 1 where idgroupe in (select idgroupe from eleve_has_groupe where ideleve = %s)', (id_eleve,))
-    cur.execute('DELETE from eleve_has_groupe where id_eleve = %s', (id_eleve,))
-    cur.execute('DELETE from eleve_has_cours where id_eleve = %s', (id_eleve,))
-    cur.execute('DELETE from eleve_has_seance where id_eleve = %s', (id_eleve,))
+    cur.execute('DELETE from eleve_has_groupe where ideleve = %s', (id_eleve,))
+    cur.execute('DELETE from eleve_has_cours where ideleve = %s', (id_eleve,))
+    cur.execute('DELETE from eleve_has_seance where ideleve = %s', (id_eleve,))
     mysql.connection.commit()
     cur.close()
-    return redirect(url_for('gerer_abs_groupe'))
+    return redirect(url_for('index'))
 
 @app.route('/groupes')
 def groupes():
@@ -534,11 +555,13 @@ def gerer_abs_groupe(idgroupe):
         nbs=cur.fetchall()
         cur.execute('SELECT idcours FROM séance WHERE idséance=%s',(idseance,))
         idcours=cur.fetchone()
+        cur.execute('SELECT formation_idformation from cours where idcours = %s', (idcours,))
+        idformation = cur.fetchone()
         cur.execute('SELECT nb_rest FROM eleve_has_cours WHERE idcours=%s AND ideleve IN (SELECT ideleve FROM eleve_has_groupe WHERE idgroupe = %s)',(idcours,idgroupe,))
         nombre_seances_rest=cur.fetchall()
         cur.close()
 
-        return render_template('gerer_abs.html', eleves_groupe=eleves_groupe, idgroupe=idgroupe,nbs=nbs,nombre_seances_rest=nombre_seances_rest)
+        return render_template('gerer_abs.html', eleves_groupe=eleves_groupe, idgroupe=idgroupe,nbs=nbs,nombre_seances_rest=nombre_seances_rest, idcours = idcours, idformation = idformation)
 
 
 @app.route('/acheter_seance/<int:ideleve>', methods=['GET', 'POST'])
