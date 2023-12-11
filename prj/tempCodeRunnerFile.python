@@ -1,0 +1,17 @@
+import numpy as np
+
+
+def treemap(f, t):
+    for i in range(len(t)):
+        if isinstance(t[i], list):
+            treemap(f,t[i])
+        else:
+            t[i] = f(t[i])
+    return t
+
+k = [[[[4, 5], [1, 4]], 74], 45, 87, [[41], 47]]
+
+def f(x):
+    return x*x
+
+print(treemap(f, k))

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter Cours{% endblock %}
+
+{% block content %}
+{% if p == 0 %}
+  {% if message %} {{ message }} {% endif %}
+  <h2>Ajouter un cours</h2>
+  <form action="{{ url_for('ajouter_cours', ideleve=ideleve, idformation=idformation, p = 0) }}" method="POST">
+    <br>
+    {{ form.cours.label }}
+    {{ form.cours }}
+    <br>
+    {% if form.cours.errors %}
+        {% for error in form.cours.errors %}
+        <b style="color:tomato;"> {{ error }} </b> 
+        <br>
+        {% endfor %}
+    {% endif %}
+    {{ form.nb_seances.label }}
+    {{ form.nb_seances }}
+    <br>
+    {% if form.nb_seances.errors %}
+        {% for error in form.nb_seances.errors %}
+        <b style="color:tomato;"> {{ error }} </b> 
+        <br>
+        {% endfor %}
+    {% endif %}
+    {{ form.csrf_token }}
+    {{ form.submit }}
+  </form>
+{% endif %}
+{% if p == 1 %}
+  {% if message %} {{ message }} {% endif %}
+  <h2>Ajouter des séances</h2>
+  <form action="{{ url_for('ajouter_cours', ideleve=ideleve, idcours = idcours, p = 1) }}" method="POST">
+    {{ form.nb_seances_ach.label }}
+    {{ form.nb_seances_ach }}
+    <br>
+    {% if form.nb_seances_ach.errors %}
+        {% for error in form.nb_seances_ach.errors %}
+        <b style="color:tomato;"> {{ error }} </b> 
+        <br>
+        {% endfor %}
+    {% endif %}
+    {{ form.csrf_token }}
+    {{ form.submit }}
+  </form>
+
+{% endif %}
+{% endblock %}
