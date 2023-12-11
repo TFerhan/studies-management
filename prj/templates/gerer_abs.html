@@ -37,9 +37,14 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if (nombre_seances_rest[loop.index0])[0] <= 0 %}
-                            <a href="{{ url_for('acheter_seance', ideleve=eleve[0]) }}">Ajouter séances</a>
-                            <a href="{{ url_for('index', ideleve=eleve[0]) }}">Supprimer l'élève</a>
+                        {% if (nombre_seances_rest[loop.index0])[0] == 1 %}
+                            <form action="{{ url_for('affectation', idgroupe = idgroupe, ideleve = ideleve)}}" method="post">
+                                <button type="submit">Ajouter</button>
+                            </form>
+                        {% if (nombre_seances_rest[loop.index0])[0] == 0 %}
+                            <form action="{{ url_for('delete_eleve_groupe',  id_eleve=eleve[0])}}" method="post">
+                                <button type="submit">Ajouter</button>
+                            </form>
                         {% endif %}
                     </td>
                 </tr>
