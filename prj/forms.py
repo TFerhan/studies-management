@@ -9,7 +9,8 @@ class AjtEleveForm(FlaskForm):
     numtel_ev = StringField('Numéro de téléphone élève', validators=[Length(max=20)])
     numtel_par = StringField('Numéro de téléphone des parents', validators=[DataRequired(), Length(max=20)])
     date_inscrit = DateField('Date d\'inscription', validators=[DataRequired()])
-    formation = SelectField('Formation', choices = [], validators=[DataRequired()])
+    formation = SelectField('Formation', coerce= int, choices = [], validators=[DataRequired()])
+    nb_seances = IntegerField()
     test = BooleanField("Seance de test ?")
     submit = SubmitField("Suivant")
 
@@ -48,18 +49,22 @@ class AjtProf(FlaskForm):
 
 class Ajtcours(FlaskForm):
     cours = SelectField('Cours', choices=[], validators=[DataRequired()])
+    nb_seances =  IntegerField('Saisir le nombre de séances acheté', validators = [NumberRange(min= 2, message="2 seances au minimum")])
     submit = SubmitField("Suivant")
 
-class Ajtseance(FlaskForm):
-    nbseance = IntegerField('Saisir le nombre de séances acheté', validators = [NumberRange(min= 8, message="8 seances au minimum")])
-    submit = SubmitField("Suivant")
+
 
 
 class Selectgrp(FlaskForm):
-    group = SelectMultipleField('Selectionne un groupe', coerce= int, validators = [DataRequired()])
+    group = SelectMultipleField('Selectionne un groupe', choices = [],  validators = [DataRequired()])
+    submit = SubmitField('Suivant')
+
+
+class AjtFacture(FlaskForm):
+    date = DateField('Date de paimment', validators = [DataRequired()])
+    submit = SubmitField("Terminer")
 
 class AchtSeanceForm(FlaskForm):
-    idcours=IntegerField('L id du cours ou vous voulez ajouter des seances',validators=[DataRequired()])
-    idgroupe=(IntegerField('L id du groupe'))
     nb_seances_ach=IntegerField('nombre de seances a ajouter',validators=[DataRequired()])
     submit = SubmitField('Valider')
+
