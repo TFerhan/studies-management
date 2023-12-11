@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter Facture{% endblock %}
+
+{% block content %}
+    {% if form %}
+        <h2>Ajouter une facture</h2>
+        <form action="{{ url_for('ajouter_facture') }}" method="POST">
+            <br>
+            {{ form.somme_total.label }}
+            {{ form.somme_total }}
+            <br>
+            {% if form.somme_total.errors %}
+                {% for error in form.somme_total.errors %}
+                    <b style="color: tomato;"> {{ error }} </b> 
+                    <br>
+                {% endfor %}
+            {% endif %}
+            {{ form.date_paiement.label }}
+            {{ form.date_paiement }}
+            <br>
+            {% if form.date_paiement.errors %}
+                {% for error in form.date_paiement.errors %}
+                    <b style="color: tomato;"> {{ error }} </b> 
+                    <br>
+                {% endfor %}
+            {% endif %}
+            {{ form.csrf_token }}
+            {{ form.submit }}
+        </form>
+    {% endif %}
+{% endblock %}
