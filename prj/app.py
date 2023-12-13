@@ -694,8 +694,9 @@ def profs():
     cur = mysql.connection.cursor()
     cur.execute('SELECT * from enseignant')
     proff = cur.fetchall()
-    cur.execute('SELECT c.nom_course, s.enseignant_idenseignant, s.idséance from cours c, séance s where c.idcours = s.idcours')
+    cur.execute('SELECT DISTINCT c.nom_course, s.enseignant_idenseignant from cours c, séance s where c.idcours = s.idcours')
     cours = cur.fetchall()
+    print(cours)
     cur.close()
     return render_template('profs.html', proff = proff, cours = cours)
 
