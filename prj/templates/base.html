@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{% block title %}FBM DBMS{% endblock %}</title>
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Acceuil</a>
+        <a href="{{ url_for('eleves') }}">Eleves</a>
+        <a href="{{ url_for('groupes') }}">Groupes</a>
+        <a href="{{ url_for('factures') }}">Factures</a>
+        <a href="{{ url_for('formations') }}">Formations</a>
+        <a href="{{ url_for('profs') }}">Professeurs</a>
+        <a href="{{ url_for('statistiques') }}">Statistiques</a>
+        <a href="{{ url_for('logout') }}">Déconnexion</a>
+    </div>
+    <div class="container">
+        {% block messages %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-message">
+                        {% for message in messages %}
+                            <div class="alert alert-success" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endblock %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+
+</html>
