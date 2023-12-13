@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Factures Data</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID Eleve</th>
+                <th>Somme Total</th>
+                <th>Date Paiement</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for facture in factures_data %}
+                <tr>
+                    <td>{{ facture[3] }}</td>
+                    <td>{{ facture[1] }}</td>
+                    <td>{{ facture[2] }}</td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

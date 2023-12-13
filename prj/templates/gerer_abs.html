@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}absence{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('valider_absences', idgroupe=idgroupe) }}" method="post">
+    <h2>Cocher les élèves absents</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Absent</th>
+                <th>Nombre d'absences</th>
+                <th>Nombre de séances restantes</th>
+                <th>Statut</th>
+                <th>Actions</th>
+                <th>Actions</th> <!-- Ajout de la colonne pour les actions -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for eleve in eleves_groupe %}
+                <tr>
+                    <td>{{ eleve[0] }}</td>
+                    <td>{{ eleve[1] }}</td>
+                    <td>{{ eleve[2] }}</td>
+                    <td><input type="checkbox" name="eleves_absents[]" value="{{ eleve[0] }}"></td>
+                    <td>{{ nbs[loop.index0] }}</td>
+                    <td>{{ nombre_seances_rest[loop.index0] }}</td>
+                    <td>
+                        {% if (nombre_seances_rest[loop.index0])[0] <= 0 %}
+                            <span style="color: red;">Expirée!!!</span>
+                        {% elif (nombre_seances_rest[loop.index0])[0] == 1 %}
+                            <span style="color: red;">C'est la dernière séance</span>
+                        {% else %}
+                            <span style="color: green;">Actif</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if (nombre_seances_rest[loop.index0])[0] == 1 %}
+                            <form action="{{ url_for('ajouter_cours', idcours = idcours, ideleve = eleve[0], p = 1, idformation = idformation)}}" method="post">
+                                <button type="submit">Ajouter</button>
+                            </form>
+                        {% endif %}
+                        {% if (nombre_seances_rest[loop.index0])[0] == 0 %}
+                            <form action="{{ url_for('delete_eleve_groupe',  id_eleve=eleve[0])}}" method="post">
+                                <button type="submit">Supprimer</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit">Valider les absences</button>
+</form>
+{% endblock %}
