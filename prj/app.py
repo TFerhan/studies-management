@@ -139,8 +139,11 @@ def eleves():
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM eleve')
     eleves_data = cur.fetchall()
+    cur.execute('select count(ec.idcours) from eleve_has_cours ec,eleve e where ec.ideleve=e.id_eleve group by ideleve')
+    nbcourseleve=cur.fetchall()
+    print(nbcourseleve) 
     cur.close()
-    return render_template("eleves.html", eleves_data = eleves_data)
+    return render_template("eleves.html", eleves_data = eleves_data,nbcourseleve=nbcourseleve)
 
 
 
@@ -753,6 +756,28 @@ def afficher_seance():
     cur.close()
     return render_template('afficher_seance.html', idprof = idprof, seances = seances, prof = prof)
 
+
+@app.route('/statistiques')
+@require_login
+def statistiques():
+
+    cur=mysql.connection.cursor()
+
+    cur.execute('select count(*) FROM eleve')
+
+    nbeleve=cur.fetchone()
+
+    cur.execute('select count(*) from enseignant')
+    nbenseignant=cur.fetchone()
+    cur.execute('select distinct eg.idcours,c.nom_course,count(eg.ideleve) from eleve_has_cours eg, cours c  where eg.idcours=c.idcours group by idcours')
+    nbelevecours=cur.fetchall()
+    cur.execute('''SELECT YEAR(date_paiement) AS Annee, MONTH(date_paiement) AS Mois, SUM(somme_total) AS Somme_Par_Mois
+FROM facture
+GROUP BY YEAR(date_paiement), MONTH(date_paiement)
+''')
+    sommeparmois=cur.fetchall()
+    print(sommeparmois)
+    return render_template('statistique.html',nbeleve=nbeleve,nbenseignant=nbenseignant,nbelevecours=nbelevecours,sommeparmois=sommeparmois)
 
 
 
