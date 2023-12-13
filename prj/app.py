@@ -1,6 +1,6 @@
 from flask import Flask, render_template, abort, request, flash
 from flask import session, redirect, url_for
-from forms import AjtEleveForm, Achtcours, LoginForm, MDPOUB, Ajtcours, Selectgrp, AchtSeanceForm
+from forms import AjtEleveForm, Achtcours, LoginForm, MDPOUB, Ajtcours, Selectgrp, AchtSeanceForm, Filtrer
 from flask_mysqldb import MySQL
 from ast import literal_eval
 
@@ -40,12 +40,12 @@ def mdp_oublie():
         cur.execute('Select id_admin from admins where CIN = %s', (cin,))
         p = cur.fetchone()
         if not p:
-            flash('Aucun CIN de cette valeur. Veuillez contacter votre administrateur', 'error')
+            flash( 'Aucun CIN de cette valeur. Veuillez contacter votre administrateur' , 'error')
             return redirect(url_for('mdp_oublie'))
         nv_mdp = form.nv_mdp.data
         verf_mdp = form.verf_mdp.data
         if nv_mdp != verf_mdp:
-            flash('Veuillez entrer les memes mots de passe')
+            flash(category= 'error', message = 'Veuillez entrer les memes mots de passe')
             return redirect(url_for('mdp_oublie'))
         cur.execute('UPDATE admins set password = %s where id_admin = %s', (nv_mdp, p[0]))
         mysql.connection.commit()
@@ -72,6 +72,37 @@ def search_eleves():
         cur.close()
 
     return render_template("eleves.html", eleves_data=eleves_data)
+
+@app.route('/filtrer', methods=['POST', 'GET'])
+def filtrer():
+    form = Filtrer()
+    if form.validate_on_submit():
+        filters = []
+        parameters = []
+        if form.jour.data:
+            filters.append('jour = %s')
+            parameters.append(form.jour.data)
+        if form.debut.data:
+            filters.append('debut BETWEEN %s AND %s')
+            parameters.extend([form.debut.data, form.fin.data])
+        if form.classe.data:
+            filters.append('classe = %s')
+            parameters.append(form.classe.data)
+        where_req = ' AND '.join(filters) if filters else '1'
+
+        cur = mysql.connection.cursor()
+        req =  f'SELECT s.idgroupe, g.nombre_eleves FROM séance s, groupe g WHERE {where_req} and s.idgroupe = g.idgroupe'
+        cur.execute(req, parameters)
+        groupe_data = cur.fetchall()
+        print(groupe_data)
+        cur.close()
+        return render_template('groupes.html', form = form , groupe_data = groupe_data)
+    return render_template('groupes.html', form = form )
+    
+
+
+
+
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -266,7 +297,14 @@ def min_formation(idformation):
     else:
         return 2
 
-
+@app.route('/afficher_membres', methods=['GET', 'POST'])
+@require_login
+def afficher_membres():
+    idgroupe = request.args.get('idgroupe')
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT e.prenom_ev, e.nom_ev from eleve e, eleve_has_groupe eg where eg.idgroupe = %s and eg.ideleve = e.id_eleve ', (idgroupe,))
+    membres = cur.fetchall()
+    return render_template('afficher_membres.html', membres = membres)
 
 @app.route('/affectation', methods=['GET', 'POST'])
 @require_login
@@ -360,14 +398,16 @@ def delete_eleve_groupe(id_eleve):
     cur.close()
     return redirect(url_for('index'))
 
-@app.route('/groupes')
+@app.route('/groupes', methods=['GET', 'POST'])
 @require_login
 def groupes():
+    form = Filtrer()
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM groupe')
     groupe_data = cur.fetchall()
+    print(groupe_data)
     cur.close()
-    return render_template("groupes.html", groupe_data = groupe_data)
+    return render_template("groupes.html", form = form, groupe_data = groupe_data)
 
 
 # @app.route('/ajouter_groupe', methods=['GET', 'POST'])
@@ -712,6 +752,13 @@ def afficher_seance():
     prof = cur.fetchone()
     cur.close()
     return render_template('afficher_seance.html', idprof = idprof, seances = seances, prof = prof)
+
+
+
+
+
+    
+
 
 
 if __name__ == "__main__":
