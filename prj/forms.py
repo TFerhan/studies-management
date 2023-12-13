@@ -73,6 +73,14 @@ class Achtcours(FlaskForm):
     submit = SubmitField('Suivant')
 
 
+class Filtrer(FlaskForm):
+    jour = SelectField('Jour', choices = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'])
+    debut = TimeField('Debut')
+    fin = TimeField('Fin')
+    classe = StringField('Classe')
+    submit = SubmitField('Filtrer')
+
+
 class MDPOUB(FlaskForm):
     cin = StringField('Entrer votre CIN', validators = [DataRequired()])
     nv_mdp = PasswordField('Entrer un nouveau mot de passe', validators = [DataRequired()])
