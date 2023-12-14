@@ -23,6 +23,9 @@ body {
     height: auto; /* Maintain aspect ratio */
     margin-right: 10px; /* Optional margin to separate logo from links */
 }
+.navbara img {
+    margin-left: 30px;
+}
 
 .navbar a {
     float: left;
@@ -223,4 +226,93 @@ h2 {
     font-size: 2em;
     margin-bottom: 20px;
     color: #333; /* Adjust the color as needed */
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Body styles */
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+/* Title styles */
+h1 {
+    text-align: center; /* Alignement au centre */
+}
+
+
+.stat-section {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center; /* Centrer les éléments horizontalement */
+    align-items: flex-start; /* Alignement des éléments au début */
+    flex-wrap: wrap;
+}
+
+
+.rectangle-container {
+    background-color: #c7e9c9;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 8px;
+    margin-right: 20px;
+    height: 150px;
+    width: 50%;
+    vertical-align: top; /* Alignement vertical au sommet */
+    margin-bottom: 20px;
+    margin-left: 25%;
+    box-shadow: 15px 4px 8px rgba(85, 226, 132, 0.582);
+}
+
+.rectangle-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: rgba(4, 112, 10, 0.822);
+    font-weight: bold;
+    font-style: normal;
+}
+
+.table-container {
+    width: 100%;
+    margin-right: 20px;
+}
+
+/* Table styles */
+/* Table styles */
+.table-container {
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    box-shadow: 15px 4px 8px rgba(85, 226, 132, 0.582);
+    margin-bottom: 20px;
+    overflow: hidden; /* Ajout pour contenir la shadow dans le conteneur */
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container th,
+.table-container td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #3f3e3e;
+}
+
+
+
+.table-container th {
+    background-color: #f2f2f2;
+}
+/* Autres styles restants... */
+
+/* Styles pour les images des logos dans les rectangles */
+.rectangle-container img {
+    width: 50px; /* Largeur de l'image */
+    height: auto; /* Hauteur ajustée automatiquement pour préserver les proportions */
+    display: block; /* Permet de gérer la taille et le positionnement de l'image */
+    margin: 0 auto 10px; /* Marge en bas pour un espacement visuel */
 }
