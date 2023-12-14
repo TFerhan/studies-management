@@ -3,13 +3,34 @@
 {% block content %}
     <h1>Statistiques</h1>
 
-    <div class="stat-section">
-        <h2>Nombre d'élèves : {{ nbeleve[0] }}</h2>
-        <h2>Nombre d'enseignants : {{ nbenseignant[0] }}</h2>
+    <div class="rectangle-container">
+        <img src="{{ url_for('static', filename='eleve.png') }}" alt="Image Description">
+        <h2><span>{{ nbeleve[0] }}</span> <br> Elèves</h2>
     </div>
+    <div class="rectangle-container">
+        <img src="{{ url_for('static', filename='enseignements.png') }}" alt="Image Description">
+        <h2><span>{{ nbenseignant[0] }}</span> <br> Enseignants</h2>
+    </div>
+    <div class="rectangle-container">
+        <img src="{{ url_for('static', filename='pile-de-livres.png') }}" alt="Image Description">
 
-    <div class="stat-section">
-        <h2>Nombre d'élèves par cours avec pourcentage :</h2>
+        <h2><span>{{ nbcours[0] }}</span> <br> Cours</h2>
+    </div>
+    <div class="rectangle-container">
+        <img src="{{ url_for('static', filename='education.png') }}" alt="Image Description">
+        <h2><span>{{ nbformation[0] }}</span> <br> Formations</h2>
+    </div>
+    <div class="rectangle-container">
+        <img src="{{ url_for('static', filename='seance.png') }}" alt="Image Description">
+        <h2><span>{{ nbtest[0] }}</span> <br>eleves ont choisi une seance de test</h2>
+    </div>
+    
+    
+
+
+
+    <div class="stat-section table-container">
+        <h4>Nombre d'élèves par cours avec pourcentage :</h4>
         <table class="table">
             <tr>
                 <th>Nom du Cours</th>
@@ -30,13 +51,13 @@
     </div>
 
 
-    <div class="stat-section">
-        <h2>Somme par mois :</h2>
+    <div class="stat-section table-container">
+        <h4>Somme par mois :</h4>
         <table class="table">
             <tr>
                 <th>Année</th>
                 <th>Mois</th>
-                <th>Somme</th>
+                <th>Somme en DH</th>
             </tr>
             {% for row in sommeparmois %}
                 <tr>
@@ -47,4 +68,5 @@
             {% endfor %}
         </table>
     </div>
+</div>
 {% endblock %}
