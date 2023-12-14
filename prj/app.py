@@ -122,7 +122,6 @@ def login():
             session['username'] = username
             return render_template('index.html',username=username)
         else:
-            flash('Username ou Password invalide.', 'error')
             return render_template('login.html', form=form)
 
     return render_template('login.html', form=form)
@@ -139,7 +138,7 @@ def eleves():
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM eleve')
     eleves_data = cur.fetchall()
-    cur.execute('select count(ec.idcours) from eleve_has_cours ec,eleve e where ec.ideleve=e.id_eleve group by ideleve')
+    cur.execute('select count(DISTINCT ec.idcours) from eleve_has_cours ec,eleve e where ec.ideleve=e.id_eleve group by e.id_eleve')
     nbcourseleve=cur.fetchall()
     print(nbcourseleve) 
     cur.close()
@@ -258,10 +257,7 @@ def ajouter_cours():
         cur.close()
 
         form.cours.choices = [(cours[0], cours[1]) for cours in courses]
-        form.nb_seances.data = min_formation(idformation)
-        form.nb_seances.validators[0].min = min_formation(idformation)
-        form.nb_seances.validators[0].message = f"{min_formation(idformation)} seances au minimum "
-
+        
         if form.validate_on_submit():
             idcours = form.cours.data
             
@@ -405,12 +401,16 @@ def delete_eleve_groupe(id_eleve):
 @require_login
 def groupes():
     form = Filtrer()
+    nomcours = []
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM groupe')
     groupe_data = cur.fetchall()
-    print(groupe_data)
+    for i in groupe_data:
+        cur.execute('select c.nom_course from cours c, séance s where c.idcours = s.idcours and s.idgroupe = %s', (i[0],))
+        nomcours.append(cur.fetchone())
+    print(nomcours)
     cur.close()
-    return render_template("groupes.html", form = form, groupe_data = groupe_data)
+    return render_template("groupes.html", form = form, groupe_data = groupe_data, nomcours = nomcours)
 
 
 # @app.route('/ajouter_groupe', methods=['GET', 'POST'])
