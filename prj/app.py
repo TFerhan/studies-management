@@ -862,14 +862,19 @@ def statistiques():
     nbenseignant=cur.fetchone()
     cur.execute('select distinct eg.idcours,c.nom_course,count(eg.ideleve) from eleve_has_cours eg, cours c  where eg.idcours=c.idcours group by idcours')
     nbelevecours=cur.fetchall()
+    cur.execute('select count(*) from cours')
+    nbcours=cur.fetchone()
+    cur.execute('select count(*) from eleve where test = 1')
+    nbtest=cur.fetchone()
+    cur.execute('select count(*) from formation')
+    nbformation=cur.fetchone()
     cur.execute('''SELECT YEAR(date_paiement) AS Annee, MONTH(date_paiement) AS Mois, SUM(somme_total) AS Somme_Par_Mois
                     FROM facture
                     GROUP BY YEAR(date_paiement), MONTH(date_paiement)
                 ''')
     sommeparmois=cur.fetchall()
-    print(sommeparmois)
-    return render_template('statistique.html',nbeleve=nbeleve,nbenseignant=nbenseignant,nbelevecours=nbelevecours,sommeparmois=sommeparmois)
-
+    
+    return render_template('statistique.html',nbtest=nbtest,nbeleve=nbeleve,nbenseignant=nbenseignant,nbelevecours=nbelevecours,sommeparmois=sommeparmois,nbcours=nbcours,nbformation=nbformation)
 
 
 if __name__ == "__main__":
