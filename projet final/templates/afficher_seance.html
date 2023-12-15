@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2>Seances pour le prof {{prof[0] + " " +  prof[1]}} </h2>
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>Type de Séance</th>
+                <th>Jour</th>
+                <th>Début</th>
+                <th>Fin</th>
+                <th>Classe</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seance in seances %}
+                <tr>
+                    <td>{{ seance[0] }}</td>
+                    <td>{{ seance[1] }}</td>
+                    <td>{{ seance[2] }}</td>
+                    <td>{{ seance[3] }}</td>
+                    <td>{{ seance[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}
