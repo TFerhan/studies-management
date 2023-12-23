@@ -704,7 +704,44 @@ def statistiques():
                 ''')
     sommeparmois=cur.fetchall()
     
-    return render_template('statistique.html',nbtest=nbtest,nbeleve=nbeleve,nbenseignant=nbenseignant,nbelevecours=nbelevecours,sommeparmois=sommeparmois,nbcours=nbcours,nbformation=nbformation)
+    mois = []
+    sommes = []
+    for row in sommeparmois:
+        mois.append(f"{row[0]}-{row[1]}") 
+        sommes.append(row[2])
+
+    trace = go.Bar(x=mois, y=sommes, marker=dict(color='blue'))
+
+    layout = go.Layout(
+        title='Somme par mois',
+        xaxis=dict(title='Mois'),
+        yaxis=dict(title='Somme en DH')
+    )
+
+    figure = go.Figure(data=[trace], layout=layout)
+
+    graph_html = figure.to_html(full_html=False)
+
+    noms_cours = [row[1] for row in nbelevecours]
+    nb_eleves_par_cours = [row[2] for row in nbelevecours]
+
+    trace_eleves_par_cours = go.Bar(x=noms_cours, y=nb_eleves_par_cours, marker=dict(color='green'))
+
+    
+    layout_eleves_par_cours = go.Layout(
+        title='Nombre d\'élèves par cours',
+        xaxis=dict(title='Cours'),
+        yaxis=dict(title='Nombre d\'élèves')
+    )
+
+    figure_eleves_par_cours = go.Figure(data=[trace_eleves_par_cours], layout=layout_eleves_par_cours)
+    graph_html_eleves_par_cours = figure_eleves_par_cours.to_html(full_html=False)
+
+
+    return render_template('statistique.html', nbtest=nbtest, nbeleve=nbeleve, nbenseignant=nbenseignant,
+                           nbelevecours=nbelevecours, sommeparmois=sommeparmois, nbcours=nbcours,
+                           nbformation=nbformation, plot=graph_html,graph_html_eleves_par_cours=graph_html_eleves_par_cours) 
+ return render_template('statistique.html',nbtest=nbtest,nbeleve=nbeleve,nbenseignant=nbenseignant,nbelevecours=nbelevecours,sommeparmois=sommeparmois,nbcours=nbcours,nbformation=nbformation)
 
 if __name__ == "__main__":
     app.run(debug=True)
