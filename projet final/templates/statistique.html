@@ -5,11 +5,12 @@
 
     <div class="rectangle-container">
         <img src="{{ url_for('static', filename='eleve.png') }}" alt="Image Description">
-        <h2><span>{{ nbeleve[0] }}</span> <br> Elèves</h2>
+        <h2><span id="countEleve">0</span> <br> Elèves</h2>
     </div>
+    
     <div class="rectangle-container">
         <img src="{{ url_for('static', filename='enseignements.png') }}" alt="Image Description">
-        <h2><span>{{ nbenseignant[0] }}</span> <br> Enseignants</h2>
+        <h2><span id="countEnseignant">0</span> <br> Enseignants</h2>
     </div>
     <div class="rectangle-container">
         <img src="{{ url_for('static', filename='pile-de-livres.png') }}" alt="Image Description">
@@ -24,6 +25,7 @@
         <img src="{{ url_for('static', filename='seance.png') }}" alt="Image Description">
         <h2><span>{{ nbtest[0] }}</span> <br>Eleves avec une séance de test</h2>
     </div>
+    
     
     
 
@@ -48,6 +50,17 @@
                 </tr>
             {% endfor %}
         </table>
+        <!-- Dans votre template statistique.html -->
+
+<div class="stat-section graph-container">
+    <h4>Nombre d'élèves par cours :</h4>
+    <div>
+        {{ graph_html_eleves_par_cours|safe }}  <!-- Affichage du graphique Plotly ici -->
+    </div>
+</div>
+
+<!-- ... (le reste de votre code HTML) -->
+
     </div>
 
 
@@ -67,6 +80,12 @@
                 </tr>
             {% endfor %}
         </table>
+    </div>
+    <div class="stat-section graph-container">
+        <h4>Somme par mois :</h4>
+        <div>
+            {{ plot|safe }}  <!-- Affichage du graphique Plotly ici -->
+        </div>
     </div>
 </div>
 {% endblock %}
