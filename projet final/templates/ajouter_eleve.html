@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter Elève{% endblock %}
+
+
+{% block content %}
+{% if message %} {{message}} {% endif %}
+
+{% if c == 0 %}
+  <h2>Ajouter un élève</h2>
+  <form  action="{{ url_for('ajouter_eleve', c = 0) }}" method="POST" class="form-center">
+    <br>
+    <div class="form-group">
+      {{ form.nom_ev.label }}
+      {{ form.nom_ev(class = "form-group") }}
+    <br>
+    
+    <div class="form-group">
+      {{ form.prenom_ev.label }}
+      {{ form.prenom_ev(class = "form-group") }}
+    <br>
+    <div class="form-group">
+      {{ form.email_ev.label }}
+      {{ form.email_ev(class = "form-group") }}
+    <br>
+    <div class="form-group">
+      {{ form.numtel_ev.label }}
+      {{ form.numtel_ev(class = "form-group") }}
+    <br>
+    <div class="form-group">
+      {{ form.numtel_par.label }}
+      {{ form.numtel_par(class = "form-group") }}
+    <br>
+    <div class="form-group">
+      {{ form.date_inscrit.label }}
+      {{ form.date_inscrit }}
+    <br>
+    <div class="form-group">
+    <br>
+      {{ form.formation.label }} <br>
+      {{ form.formation(class = "form-group") }}
+    <br>
+    <div class="form-group">
+    <br>
+      {{ form.test.label }} <br>
+      {{ form.test(class = "form-group") }}
+    <br>
+    
+    
+    
+    {{ form.csrf_token }}
+    
+    {{ form.submit(class = "btn") }}
+
+    
+  </form>
+{% endif %}
+{% if c == 1 %}
+  <h2>Choisir une formation </h2>
+  <form  action="{{ url_for('ajouter_eleve', ideleve = ideleve, c = 1) }}" method="POST">
+    <div class="form-group">
+      {{ form.formation.label }} <br>
+      {{ form.formation(class = "form-group") }}
+    <br>
+    
+    {{ form.csrf_token }}
+    {{ form.submit(class = "btn") }}
+    </form>
+{% endif %}
+  
+
+{% endblock %}
