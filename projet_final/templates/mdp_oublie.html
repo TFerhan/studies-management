@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <title>Mot de passe oublié</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="flash-message">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="form-container">
+            <h2>Réinitialiser le mot de passe</h2>
+            <br>
+            <br>
+            <form method="post" action="{{ url_for('mdp_oublie') }}">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.cin.label }}<br>
+                    {{ form.cin(size=30, placeholder="Entrer votre CIN", required=true) }}
+                </div>
+                <br>
+                <div class="form-group">
+                    {{ form.nv_mdp.label }}<br>
+                    {{ form.nv_mdp(size=30, placeholder="Entrer un nouveau mot de passe", required=true) }}
+                </div>
+                <br>
+                <div class="form-group">
+                    {{ form.verf_mdp.label }}<br>
+                    {{ form.verf_mdp(size=30, placeholder="Vérifier le mot de passe", required=true) }}
+                </div>
+                <br>
+                <div class="form-group">
+                    {{ form.submit(class="btn") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

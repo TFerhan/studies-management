@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Membres du Groupe</h2>
+
+    {% if membres %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for membre in membres %}
+                    <tr>
+                        <td>{{ membre[0] }}</td>
+                        <td>{{ membre[1] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <br>
+    <br>
+        <p>Aucun membre trouvé pour ce groupe.</p>
+    {% endif %}
+    <br>
+    <br>
+    
+    <form action="{{ url_for('groupes')}}" method="post">
+        <button type="submit">Retour</button>
+    </form>
+{% endblock %}

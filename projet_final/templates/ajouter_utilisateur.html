@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter Utilisateur{% endblock %}
+
+
+{% block content %}
+{% if message %} {{message}} {% endif %}
+    <h2>Ajouter un utilisateur</h2>
+    <form action="{{ url_for('ajouter_utilisateur') }}" method="post" class = "form-center">
+        <br>
+        <div class="form-group">
+        {{ form.nom.label }}
+        {{ form.nom(class = "form-group") }}
+        <br>
+        
+        <div class="form-group">
+        {{ form.prenom.label }}
+        {{ form.prenom(class = "form-group") }}
+        <br>
+        <div class="form-group">
+        {{ form.cin.label }}
+        {{ form.cin(class = "form-group") }}
+        <br>
+        <div class="form-group">
+        {{ form.username.label }}
+        {{ form.username(class = "form-group") }}
+        <br>
+        <div class="form-group">
+        {{ form.mdp.label }}
+        {{ form.mdp(class = "form-group") }}
+        <br>
+        <div class="form-group">
+        {{ form.re_mdp.label }}
+        {{ form.re_mdp }}
+        <br>
+        <div class="form-group">
+        <br>
+        {{ form.role.label }} <br>
+        {{ form.role(class = "form-group") }}
+        <br>
+        <div class="form-group">
+        <br>
+        
+        
+        
+        
+        {{ form.csrf_token }}
+        
+        {{ form.submit(class = "btn") }}
+    </form>
+
+{% endblock %}
