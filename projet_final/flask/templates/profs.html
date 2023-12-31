@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Profs Informations</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Numéro de Téléphone</th>
+                <th>CIN</th>
+                <th>Cours</th>
+                <th>Seances </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prof in proff %}
+                <tr>
+                    <td>{{ prof[0] }}</td>
+                    <td>{{ prof[1] }}</td>
+                    <td>{{ prof[2] }}</td>
+                    <td>{{ prof[3] }}</td>
+                    <td>{{ prof[4] }}</td>
+                    <td>{{ prof[5] }}</td>
+                    
+                        
+                    <td>
+                          {% for cours_info in cours %}
+                            {% if cours_info[1] == prof[0] %}
+                                {{ cours_info[0] }}<br>
+                                
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                          <form action="{{ url_for('afficher_seance', idprof = prof[0] )}}" method="post">
+                            <button type="submit">Afficher Seances</button>
+                        </form>
+                    </td> 
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+{% endblock %}
