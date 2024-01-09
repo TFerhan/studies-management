@@ -44,7 +44,8 @@ Follow these instructions to set up and run the project.
 4. Visit http://localhost:5000 in your web browser to access the Studies Management System.
 
 ### Stopping the Application
-To stop the application, run
+
+ To stop the application
     ```bash
     docker-compose down
 
