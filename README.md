@@ -70,7 +70,7 @@ This project was created by a team of three students:
   - LinkedIn: [Malhouni Youness on LinkedIn](https://www.linkedin.com/in/youness-malhouni/)
 
 - **Boubnik Badreddine**
-  - LinkedIn: [Boubnik Badreddine on LinkedIn](https://www.linkedin.com/in/badr-eddine-boubnik-b7a6a222b/)
+  - LinkedIn: [Boubnik Badreddine on LinkedIn](https://www.linkedin.com/in/badr-eddine-boubnik/)
 
 Feel free to connect with us on LinkedIn to learn more about our skills and experiences!
 
