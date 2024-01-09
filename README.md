@@ -45,7 +45,8 @@ Follow these instructions to set up and run the project.
 
 ### Stopping the Application
 
- To stop the application
+To stop the application, run:
+
     ```bash
     docker-compose down
 
