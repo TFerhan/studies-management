@@ -34,19 +34,19 @@ Follow these instructions to set up and run the project.
    cd <your-project-name>
    
 2. Build the project using Docker Compose:
-```bash
-docker-compose build
+   ```bash
+   docker-compose build
 
 3. Run the project:
-```bash
-docker-compose up -d
+   ```bash
+   docker-compose up -d
 
 4. Visit http://localhost:5000 in your web browser to access the Studies Management System.
 
 ### Stopping the Application
 To stop the application, run:
-```bash
-docker-compose down
+    ```bash
+    docker-compose down
 
 ### Database Setup (Optional)
 If you prefer to set up a MySQL database locally instead of using Docker Compose:
