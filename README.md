@@ -67,7 +67,7 @@ This project was created by a team of three students:
   - LinkedIn: [Ferhan Taha on LinkedIn](https://www.linkedin.com/in/tferhan/)
 
 - **Malhouni Youness**
-  - LinkedIn: [Malhouni Youness on LinkedIn](https://www.linkedin.com/in/janesmith/)
+  - LinkedIn: [Malhouni Youness on LinkedIn](https://www.linkedin.com/in/youness-malhouni/)
 
 - **Boubnik Badreddine**
   - LinkedIn: [Boubnik Badreddine on LinkedIn](https://www.linkedin.com/in/alexjohnson/)
