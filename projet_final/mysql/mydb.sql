@@ -23,9 +23,9 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id_admin`, `nom`, `prenom`, `role`, `username`, `password`, `CIN`) VALUES
-(1, 'Youness', 'Malhouni', 0, 'youness', '100', 'SD456'),
+(1, 'Youness', 'Malhouni', 1, 'youness', '100', 'SD456'),
 (2, 'Ferhan', 'Taha', 1, 'taha', 'mdp', 'BJ4585'),
-(4, 'Boubnik', 'Badreddine', 0, 'badr', 'badr', 'HG478547');
+(3, 'Boubnik', 'Badreddine', 1, 'badr', 'badr', 'HG478547');
 
 -- --------------------------------------------------------
 
