@@ -21,7 +21,7 @@ This project is a Studies Management System developed using Flask. It utilizes D
 
 Follow these instructions to set up and run the project.
 
-### Prerequisites
+### Prerequisites (Optional)
 
 - Docker: Install [Docker](https://docs.docker.com/get-docker/).
 - Docker Compose: Install [Docker Compose](https://docs.docker.com/compose/install/).
@@ -30,8 +30,8 @@ Follow these instructions to set up and run the project.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<your-username>/<your-project-name>.git
-   cd <your-project-name>
+   git clone https://github.com/tferhan/studies-management.git
+   cd studies-management
    
 2. Build the project using Docker Compose:
    ```bash
