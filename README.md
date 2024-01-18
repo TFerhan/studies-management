@@ -43,6 +43,8 @@ Follow these instructions to set up and run the project.
 
 4. Visit http://localhost:5000 in your web browser to access the Studies Management System.
 
+5. For the login credentials use { User : taha , Password : mdp} 
+
 ### Stopping the Application
 
 To stop the application, run:
@@ -55,6 +57,7 @@ If you prefer to set up a MySQL database locally instead of using Docker Compose
 Install MySQL (e.g., using XAMPP or directly).
 Import the database schema using mydb.sql.
 Update the Flask application configuration in app.py to connect to your local MySQL database.
+For the login credentials use { User : taha , Password : mdp} 
 
 ### Contributing
 Feel free to contribute by opening issues or submitting pull requests.
