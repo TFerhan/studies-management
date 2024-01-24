@@ -1,6 +1,10 @@
 # Studies Management System
 
 This project is a Studies Management System developed using Flask. It utilizes Docker Compose for easy deployment.
+## THE WEB APP LINK
+
+This is the web app deployed on Heroku. You can check it out [here](https://studies-management-03ae887bf7f5.herokuapp.com/) use {Username: test, Password: test}.
+For financial costs the web app won't be hosted all time, instead you can run it locally following the documentation bellow. 
 
 ## Project Hierarchy
 
